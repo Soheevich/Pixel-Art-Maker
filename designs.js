@@ -68,5 +68,19 @@ $(":button").click(function() {
 
 // Drawing
 $("#pixel_canvas").on("click", "td", function() {
-  $(this).css("background-color", color)
+  $(this).css("background-color", color);
+  // $("#pixel_canvas").on("mouseover", "td", function() {
+  //   $(this).css("background-color", color);
+  //   $(this).on("mouseup", "td", function() {
+  //     return;
+  //   });
+  //   return;
+  // });
+  // return;
+});
+
+// Erasing
+$("#pixel_canvas").on("contextmenu", "td", function(event) {
+  event.preventDefault();
+  $(this).removeAttr("style");
 });
