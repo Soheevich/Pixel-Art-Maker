@@ -1,5 +1,5 @@
 //Listening for color change
-let color;
+var color;
 $("#colorPicker").on("change", function() {
   color = $("#colorPicker").val();
 });
@@ -22,6 +22,10 @@ function makeGrid(height, width) {
 
 /*
 Сделать проверку на лету, чтобы показывалось предупреждение, в случае неверного ввода чисел
+Отключать кнопку
+Проверка пока не доделана
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/button
 
 
 В CSS затемнять клетки при прохождении курсора
@@ -33,11 +37,22 @@ id в таблице можно использовать, чтобы делат�
 Генерировать сетку только в один квадрат, после вызвать функцию, которая щелкнет в начале, ее узнать координату в левом верхнем углу, потом по координатам курсора уже рисовать.
 
 */
+// Disable button if input is incorrect
+$("input").on("change", function() {
+  let h = Number($("#input_height").val());
+  let w = Number($("#input_width").val());
+  // Grid values are 0 < x < 60
+  if ((h > 0 && h <= 60) && (w > 0 && w <= 60)) {
+    $(":button").prop("disabled", false);
+  } else {
+    $(":button").prop("disabled", true);
+  }
+});
+
 
 // Making grid
-// Button doesn't refresh the page. Remove previous grid.
-$(":submit").click(function(evt) {
-  evt.preventDefault();
+// Remove previous grid.
+$(":button").click(function() {
   $("#pixel_canvas").children().remove();
   // Values should be only numbers
   console.log(typeof $("#input_height").val());
@@ -47,11 +62,13 @@ $(":submit").click(function(evt) {
   let w = Number($("#input_width").val());
   // Grid values are 0 < x < 60
   if ((h > 0 && h <= 60) && (w > 0 && w <= 60)) {
+    console.log(`height is ${h} ${typeof h}`);
+    console.log(`width is ${w} ${typeof w}`);
     makeGrid(h, w);
   } else {
     alert("Please insert numbers from 1 to 60")
-    console.log("height is " + h + typeof h);
-    console.log("width is " + w + typeof w);
+    console.log(`height is ${h} ${typeof h}`);
+    console.log(`width is ${w} ${typeof w}`);
   }
 });
 
