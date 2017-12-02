@@ -1,12 +1,14 @@
-//Listening for color change
 var color = $("#colorPicker").val();
+var canvas = $("#pixel_canvas");
+
+// Listening for color change
 $("#colorPicker").on("change", function() {
   color = $("#colorPicker").val();
 });
 
 //Function for Making grid
 function makeGrid(height, width) {
-  let tablePos = $("#pixel_canvas");
+  let tablePos = canvas;
   //Building rows and columns
   for (let row = 0; row < height; row++) {
     tablePos.append("<tr>");
@@ -19,23 +21,7 @@ function makeGrid(height, width) {
   }
 }
 
-/*
-Сделать проверку на лету, чтобы показывалось предупреждение, в случае неверного ввода чисел
-Отключать кнопку
-Проверка пока не доделана
-https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number
-https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/button
 
-
-В CSS затемнять клетки при прохождении курсора
-Максимально задействовать CSS, пока хз как
-Обнулять цвет по пкм
-Настроить UI и шрифты
-Настроить таблицу цветов
-id в таблице можно использовать, чтобы делать потом картинку
-Генерировать сетку только в один квадрат, после вызвать функцию, которая щелкнет в начале, ее узнать координату в левом верхнем углу, потом по координатам курсора уже рисовать.
-
-*/
 // Disable button if input is incorrect
 $("input").on("change", function() {
   let h = Number($("#input_height").val());
@@ -49,11 +35,11 @@ $("input").on("change", function() {
 });
 
 // Making grid
-// Remove previous grid.
 $(":button").click(function() {
-  $("#pixel_canvas").children().remove();
+  // Remove previous grid.
+  canvas.children().remove();
 
-  // Values should be only numbers
+  // Values should be Numbers
   let h = Number($("#input_height").val());
   let w = Number($("#input_width").val());
 
@@ -67,20 +53,27 @@ $(":button").click(function() {
 
 
 // Drawing
-$("#pixel_canvas").on("click", "td", function() {
+canvas.on("mousedown", "td", function() {
+  let draw = true;
   $(this).css("background-color", color);
-  // $("#pixel_canvas").on("mouseover", "td", function() {
-  //   $(this).css("background-color", color);
-  //   $(this).on("mouseup", "td", function() {
-  //     return;
-  //   });
-  //   return;
-  // });
-  // return;
+
+  // Listening for mouseUp
+  canvas.on("mouseup", "td", function() {
+    return draw = false;
+  });
+
+  // Continuos drawing
+  canvas.on("mouseenter", "td", function() {
+    if (!draw) {
+      return;
+    }
+    $(this).css("background-color", color);
+  });
 });
 
+
 // Erasing
-$("#pixel_canvas").on("contextmenu", "td", function(event) {
+canvas.on("contextmenu", "td", function(event) {
   event.preventDefault();
   $(this).removeAttr("style");
 });
