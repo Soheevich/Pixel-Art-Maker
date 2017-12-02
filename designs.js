@@ -1,5 +1,18 @@
 var color = $("#colorPicker").val();
-var canvas = $("#pixel_canvas");
+const canvas = $("#pixel_canvas");
+
+/*
+Сделать проверку на лету, чтобы показывалось предупреждение, в случае неверного ввода чисел
+
+Стирать по ПКМ http://api.jquery.com/event.which/
+В CSS затемнять клетки при прохождении курсора
+Максимально задействовать CSS, пока хз как
+Настроить UI и шрифты
+Настроить таблицу цветов
+id в таблице можно использовать, чтобы делать потом картинку
+Генерировать сетку только в один квадрат, после вызвать функцию, которая щелкнет в начале, ее узнать координату в левом верхнем углу, потом по координатам курсора уже рисовать.
+
+*/
 
 // Listening for color change
 $("#colorPicker").on("change", function() {
@@ -9,7 +22,7 @@ $("#colorPicker").on("change", function() {
 //Function for Making grid
 function makeGrid(height, width) {
   let tablePos = canvas;
-  //Building rows and columns
+  //Building rows and columns, adding ids
   for (let row = 0; row < height; row++) {
     tablePos.append("<tr>");
     let col = 0;
@@ -51,29 +64,47 @@ $(":button").click(function() {
   }
 });
 
-
-// Drawing
-canvas.on("mousedown", "td", function() {
-  let draw = true;
-  $(this).css("background-color", color);
-
-  // Listening for mouseUp
-  canvas.on("mouseup", "td", function() {
-    return draw = false;
-  });
-
-  // Continuos drawing
-  canvas.on("mouseenter", "td", function() {
-    if (!draw) {
-      return;
-    }
-    $(this).css("background-color", color);
-  });
-});
-
-
-// Erasing
-canvas.on("contextmenu", "td", function(event) {
+// Drawing and Erasing
+canvas.on("mousedown", "td", function(event) {
   event.preventDefault();
-  $(this).removeAttr("style");
+
+  if (event.which === 1) {
+
+    //Drawing
+    let draw = true;
+    $(this).css("background-color", color);
+
+    // Listening for mouseUp
+    canvas.on("mouseup", "td", function() {
+      return draw = false;
+    });
+
+    // Continuos drawing
+    canvas.on("mouseenter", "td", function() {
+      if (!draw) {
+        return;
+      }
+      $(this).css("background-color", color);
+    });
+  } else if (event.which === 3) {
+
+    // Erasing
+    let erase = true;
+    $(this).css("background-color", "white");
+
+    // Listening for mouseUp
+    canvas.on("mouseup contextmenu", "td", function() {
+      event.preventDefault();
+      return erase = false;
+    });
+
+    // Continuos erasing
+    canvas.on("mouseenter", "td", function() {
+      if (!erase) {
+        return;
+      }
+      $(this).css("background-color", "white");
+    });
+  }
+
 });
