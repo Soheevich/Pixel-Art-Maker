@@ -75,7 +75,7 @@ canvas.on("mousedown", "td", function(event) {
     $(this).css("background-color", color);
 
     // Listening for mouseUp
-    canvas.on("mouseup", "td", function() {
+    $(document).on("mouseup", function() {
       return draw = false;
     });
 
@@ -93,7 +93,7 @@ canvas.on("mousedown", "td", function(event) {
     $(this).css("background-color", "white");
 
     // Listening for mouseUp
-    canvas.on("mouseup contextmenu", "td", function() {
+    $(document).on("mouseup contextmenu", function() {
       event.preventDefault();
       return erase = false;
     });
