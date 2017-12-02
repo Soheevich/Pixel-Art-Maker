@@ -29,18 +29,20 @@ function makeGrid(height, width) {
 Обнулять цвет по пкм
 Настроить UI и шрифты
 Настроить таблицу цветов
+id в таблице можно использовать, чтобы делать потом картинку
+Генерировать сетку только в один квадрат, после вызвать функцию, которая щелкнет в начале, ее узнать координату в левом верхнем углу, потом по координатам курсора уже рисовать.
 
-
-// меняет только html
-$("h1").css("font-family", "Arial");
 */
 
 // Making grid
-// Button doesn't refresh page. Remove previous grid.
+// Button doesn't refresh the page. Remove previous grid.
 $(":submit").click(function(evt) {
   evt.preventDefault();
   $("#pixel_canvas").children().remove();
   // Values should be only numbers
+  console.log(typeof $("#input_height").val());
+  console.log(typeof $("#input_width").val());
+
   let h = Number($("#input_height").val());
   let w = Number($("#input_width").val());
   // Grid values are 0 < x < 60
@@ -53,7 +55,8 @@ $(":submit").click(function(evt) {
   }
 });
 
+
 // пока в процессе
-$("#pixel_canvas").mousedown("td", function() {
-  console.log("mousedown");
+$("#pixel_canvas").on("click", "td", function() {
+
 });
