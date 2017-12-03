@@ -14,77 +14,51 @@ tablePos.children().last().append(`<td id="${row}-${col}"></td>`);
 
 
 Особенности:
-- Тотальная защита от неправильного ввода
+- Тотальная защита от неправильного ввода (убрана по совету ментора за ненадобностью)
 - Легкое рисование и стирание с зажатой кнопкой (ЛКМ или ПКМ соответственно)
 - Устранен баг при рисовании, когда можно было зажать кнопку, увести курсор из сетки, отпустить кнопку, вернуться на сетку, а рисование продолжалось
 - Устранен баг, когда можно было рисовать правой кнопкой мыши.
 */
 
-
-const canvas = $("#pixel_canvas");
-let color = $("#colorPicker").val();
-let h = Number($("#input_height").val());
-let w = Number($("#input_width").val());
-
-const colorPicker = document.getElementById("colorPicker");
+const colorPicker = $("#colorPicker");
+const inputHeight = $("#input_height");
+const inputWidth = $("#input_width");
+const sizePicker = $("#sizePicker");
+const table = $("#pixel_canvas");
+const canvas = document.getElementById("pixel_canvas");
 
 
 // Function Making grid
-function makeGrid(height, width) {
-  for (let row = 0; row < height; row++) {
-    canvas.append("<tr>");
-    let col = 0;
-    while (col < width) {
-      canvas.children().last().append("<td></td>");
-      col += 1;
+makeGrid = () => {
+  // Retrive the values of the input elements.
+  let height = inputHeight.val();
+  let width = inputWidth.val();
+
+  // Rest of the function.
+  table.children().remove();
+  for (let i = 0; i < height; i++) {
+    let row = canvas.insertRow(i);
+    for (let j = 0; j < width; j++) {
+      let cell = row.insertCell(j);
     }
-    canvas.append("</tr>");
   }
 }
 
 
-// Listening for color change
-$("#colorPicker").on("change", function() {
-  color = $("#colorPicker").val();
-});
-
-
-// Listening for grid size input
-$("input").on("change", function() {
-  h = Number($("#input_height").val());
-  w = Number($("#input_width").val());
-});
-
-
-// Disable "Make grid" button if input is incorrect
-$("input").on("change", function disableButton() {
-  // Grid values are 0 < x < 60
-  if ((h > 0 && h <= 60) && (w > 0 && w <= 60)) {
-    $(":button").prop("disabled", false);
-  } else {
-    $(":button").prop("disabled", true);
-  }
-});
-
-
-// Making grid
-$(":button").click(function() {
-  // Remove previous grid.
-  canvas.children().remove();
-  makeGrid(h, w);
+sizePicker.on("submit", function(e) {
+  e.preventDefault();
+  makeGrid();
 });
 
 
 // Drawing and Erasing
-canvas.on("mousedown", "td", function(event) {
+table.on("mousedown", "td", function(event) {
   event.preventDefault(); // No drag'n'drop attempts
 
   //Drawing
   if (event.which === 1) {
     let draw = true;
-    // $(this).css("background-color", color);
-    element.style.backgroundColor = colorPicker.value;
-    console.log(colorPicker.value);
+    $(this).css("background-color", colorPicker.val());
 
     // Listening for mouseUp
     $(document).on("mouseup", function() {
@@ -92,12 +66,13 @@ canvas.on("mousedown", "td", function(event) {
     });
 
     // Continuos drawing
-    canvas.on("mouseenter", "td", function() {
-      if (!draw) {
+    table.on("mouseenter", "td", function() {
+      if (draw) {
+        $(this).css("background-color", colorPicker.val());
+      } else {
         return;
       }
-      // $(this).css("background-color", color);
-      element.style.backgroundColor = colorPicker.value;
+
     });
 
     // Erasing
@@ -112,11 +87,13 @@ canvas.on("mousedown", "td", function(event) {
     });
 
     // Continuos erasing
-    canvas.on("mouseenter", "td", function() {
-      if (!erase) {
+    table.on("mouseenter", "td", function() {
+      if (erase) {
+        $(this).css("background-color", "white");
+      } else {
         return;
       }
-      $(this).css("background-color", "white");
+
     });
   }
 
