@@ -26,6 +26,8 @@ let color = $("#colorPicker").val();
 let h = Number($("#input_height").val());
 let w = Number($("#input_width").val());
 
+const colorPicker = document.getElementById("colorPicker");
+
 
 // Function Making grid
 function makeGrid(height, width) {
@@ -80,7 +82,9 @@ canvas.on("mousedown", "td", function(event) {
   //Drawing
   if (event.which === 1) {
     let draw = true;
-    $(this).css("background-color", color);
+    // $(this).css("background-color", color);
+    element.style.backgroundColor = colorPicker.value;
+    console.log(colorPicker.value);
 
     // Listening for mouseUp
     $(document).on("mouseup", function() {
@@ -92,7 +96,8 @@ canvas.on("mousedown", "td", function(event) {
       if (!draw) {
         return;
       }
-      $(this).css("background-color", color);
+      // $(this).css("background-color", color);
+      element.style.backgroundColor = colorPicker.value;
     });
 
     // Erasing
