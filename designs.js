@@ -1,9 +1,34 @@
-var color = $("#colorPicker").val();
-const canvas = $("#pixel_canvas");
+/*
+Сделать
+В CSS затемнять клетки при прохождении курсора
+Максимально задействовать CSS, пока хз как
+Настроить UI и шрифты
+Настроить таблицу цветов - пока только с добавлением сторонних библиотек. Не айс.
+id в таблице можно использовать, чтобы делать потом картинку (надо при создании таблицы всем цветам принудительно ставить белый цвет)
+34 строка где-то, сюда добавить стиль на белый цвет, не айс, но щито поделать:
+tablePos.children().last().append(`<td id="${row}-${col}"></td>`);
 
-//Function for Making grid
+Динамичное отрисовывание элементов при загрузке страницы и сетки
+Добавить иконки
+Добавить всплывающие подсказки
+
+
+Особенности:
+- Тотальная защита от неправильного ввода
+- Легкое рисование и стирание с зажатой кнопкой (ЛКМ или ПКМ соответственно)
+- Устранен баг при рисовании, когда можно было зажать кнопку, увести курсор из сетки, отпустить кнопку, вернуться на сетку, а рисование продолжалось
+- Устранен баг, когда можно было рисовать правой кнопкой мыши.
+*/
+
+
+const canvas = $("#pixel_canvas");
+let color = $("#colorPicker").val();
+let h = Number($("#input_height").val());
+let w = Number($("#input_width").val());
+
+
+// Function Making grid
 function makeGrid(height, width) {
-  //Building rows and columns
   for (let row = 0; row < height; row++) {
     canvas.append("<tr>");
     let col = 0;
@@ -22,10 +47,15 @@ $("#colorPicker").on("change", function() {
 });
 
 
-// Disable "Make grid" button if input is incorrect
+// Listening for grid size input
 $("input").on("change", function() {
-  let h = Number($("#input_height").val());
-  let w = Number($("#input_width").val());
+  h = Number($("#input_height").val());
+  w = Number($("#input_width").val());
+});
+
+
+// Disable "Make grid" button if input is incorrect
+$("input").on("change", function disableButton() {
   // Grid values are 0 < x < 60
   if ((h > 0 && h <= 60) && (w > 0 && w <= 60)) {
     $(":button").prop("disabled", false);
@@ -34,30 +64,21 @@ $("input").on("change", function() {
   }
 });
 
+
 // Making grid
 $(":button").click(function() {
   // Remove previous grid.
   canvas.children().remove();
-
-  // Values should be Numbers
-  let h = Number($("#input_height").val());
-  let w = Number($("#input_width").val());
-
-  // Grid values are 0 < x < 60
-  if ((h > 0 && h <= 60) && (w > 0 && w <= 60)) {
-    makeGrid(h, w);
-  } else {
-    alert("Please insert numbers from 1 to 60")
-  }
+  makeGrid(h, w);
 });
+
 
 // Drawing and Erasing
 canvas.on("mousedown", "td", function(event) {
   event.preventDefault(); // No drag'n'drop attempts
 
+  //Drawing
   if (event.which === 1) {
-
-    //Drawing
     let draw = true;
     $(this).css("background-color", color);
 

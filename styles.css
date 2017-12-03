@@ -47,9 +47,9 @@ input:invalid+span:after {
   color: red;
 }
 
-input:invalid+input[type=button] {
+/*input:invalid+input[type=button] {
   disabled
-}
+}*/
 
 input:valid+span:after {
   content: '✓';
