@@ -64,7 +64,7 @@ table.on("mousedown", "td", event => {
     $(document).on("mouseup", () => draw = false);
 
     // Continuos drawing
-    table.on("mouseenter", "td", () => {
+    table.on("mouseenter", "td", function() {
       if (draw) {
         $(this).css("background-color", colorPicker.val());
       } else {
@@ -82,7 +82,7 @@ table.on("mousedown", "td", event => {
     $(document).on("mouseup", () => erase = false);
 
     // Continuos erasing
-    table.on("mouseenter", "td", () => {
+    table.on("mouseenter", "td", function() {
       if (erase) {
         $(this).css("background-color", "white");
       } else {
