@@ -58,36 +58,34 @@ table.on("mousedown", "td", event => {
   //Drawing
   if (event.which === 1) {
     let draw = true;
-    $(this).css("background-color", colorPicker.val());
+    $(event.target).css("background-color", colorPicker.val());
 
     // Listening for mouseUp
     $(document).on("mouseup", () => draw = false);
 
     // Continuos drawing
-    table.on("mouseenter", "td", function() {
-      if (draw) {
-        $(this).css("background-color", colorPicker.val());
-      } else {
+    table.on("mouseenter", "td", (event) => {
+      if (!draw) {
         return;
       }
+      $(event.target).css("background-color", colorPicker.val());
 
     });
 
     // Erasing
   } else if (event.which === 3) {
     let erase = true;
-    $(this).css("background-color", "white");
+    $(event.target).css("background-color", "white");
 
     // Listening for mouseUp and disabling contextmenu
     $(document).on("mouseup", () => erase = false);
 
     // Continuos erasing
-    table.on("mouseenter", "td", function() {
-      if (erase) {
-        $(this).css("background-color", "white");
-      } else {
+    table.on("mouseenter", "td", (event) => {
+      if (!erase) {
         return;
       }
+      $(event.target).css("background-color", "white");
 
     });
   }
