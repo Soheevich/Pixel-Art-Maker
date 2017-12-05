@@ -11,6 +11,7 @@ tablePos.children().last().append(`<td id="${row}-${col}"></td>`);
 Динамичное отрисовывание элементов при загрузке страницы и сетки
 Добавить иконки
 Добавить всплывающие подсказки
+Сделать кнопку с рандомом, которая раскрашивает все клетки в случайные цвета. Иногда выдавать нарисованную картинку, будто случайно нарисовалась.
 
 
 Особенности:
@@ -29,7 +30,7 @@ const canvas = document.getElementById("pixel_canvas");
 
 
 // Function Making grid
-makeGrid = () => {
+const makeGrid = () => {
   // Retrive the values of the input elements.
   let height = inputHeight.val();
   let width = inputWidth.val();
@@ -45,15 +46,14 @@ makeGrid = () => {
 }
 
 
-sizePicker.on("submit", function(e) {
+sizePicker.on("submit", e => {
   e.preventDefault();
   makeGrid();
 });
 
 
 // Drawing and Erasing
-table.on("mousedown", "td", function(event) {
-  event.preventDefault(); // No drag'n'drop attempts
+table.on("mousedown", "td", event => {
 
   //Drawing
   if (event.which === 1) {
@@ -61,12 +61,10 @@ table.on("mousedown", "td", function(event) {
     $(this).css("background-color", colorPicker.val());
 
     // Listening for mouseUp
-    $(document).on("mouseup", function() {
-      return draw = false;
-    });
+    $(document).on("mouseup", () => draw = false);
 
     // Continuos drawing
-    table.on("mouseenter", "td", function() {
+    table.on("mouseenter", "td", () => {
       if (draw) {
         $(this).css("background-color", colorPicker.val());
       } else {
@@ -81,13 +79,10 @@ table.on("mousedown", "td", function(event) {
     $(this).css("background-color", "white");
 
     // Listening for mouseUp and disabling contextmenu
-    $(document).on("mouseup contextmenu", function() {
-      event.preventDefault();
-      return erase = false;
-    });
+    $(document).on("mouseup", () => erase = false);
 
     // Continuos erasing
-    table.on("mouseenter", "td", function() {
+    table.on("mouseenter", "td", () => {
       if (erase) {
         $(this).css("background-color", "white");
       } else {
