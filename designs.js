@@ -5,6 +5,9 @@ const sizePicker = $("#sizePicker");
 const table = $("#pixel_canvas");
 const canvas = document.getElementById("pixel_canvas");
 
+const userLang = navigator.language || navigator.userLanguage;
+alert("The language is: " + userLang);
+
 
 // Function Making grid
 const makeGrid = () => {

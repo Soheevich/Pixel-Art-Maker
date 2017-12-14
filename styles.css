@@ -1,13 +1,26 @@
+@import url("https://fonts.googleapis.com/css?family=Permanent+Marker");
+@import url("https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:900");
+@import url("https://fonts.googleapis.com/css?family=Roboto");
 body {
   text-align: center;
   background: #F6F9FC;
+  font-family: "Roboto", sans-serif;
 }
 
-h1 {
-  font-family: Monoton;
+.pixel_header {
+  font-family: "Alegreya Sans SC", sans-serif;
   font-size: 70px;
   margin: 0.2em;
-  color: #122A40;
+  color: #F6F9FC;
+  background-color: #122A40;
+}
+
+.cristmas {
+  font-family: "Permanent Marker", cursive;
+  font-size: 70px;
+  color: #F23D6D;
+  background-color: #122A40;
+  margin: 5px auto;
 }
 
 h2 {
@@ -26,10 +39,7 @@ table {
   border-collapse: collapse;
   margin: 0 auto;
   transition: all 200ms ease-out;
-}
-
-table:hover {
-  box-shadow: 0 19px 38px rgba(0, 0, 10, 0.30), 0 15px 12px rgba(0, 0, 10, 0.22);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
 tr {
@@ -50,4 +60,8 @@ input[type=button] {
 
 input:invalid {
   background-color: pink;
+}
+
+footer {
+  height: 100px;
 }

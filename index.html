@@ -4,33 +4,42 @@
 <head>
   <title>Pixel Art Maker!</title>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Monoton">
   <link rel="stylesheet" href="styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 
 <body>
-  <h1>Lab: Pixel Art Maker</h1>
+  <header>
+    <h1 class="pixel_header">Lab: Pixel Art Maker</h1>
+    <p class="cristmas">Happy Christmas!</p>
+  </header>
 
-  <h2>Choose Grid Size</h2>
-  <p>(60x60 maximum)</p>
-  <form id="sizePicker">
-    Grid Height:
-    <input type="number" id="input_height" name="height" min="1" value="10" min="1" max="60" required>
-    <span class="validity"></span> Grid Width:
-    <input type="number" id="input_width" name="width" min="1" value="10" min="1" max="60" required>
-    <span class="validity"></span>
-    <input type="submit" value="Make Grid">
-  </form>
+  <div class="grid_parameters">
+    <h2>Choose Grid Size</h2>
+    <p>(60x60 maximum)</p>
+    <form id="sizePicker">
+      Grid Height:
+      <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="60" required>
+      <span class="validity"></span> Grid Width:
+      <input type="number" id="input_width" name="width" min="1" value="15" min="1" max="60" required>
+      <span class="validity"></span>
+      <input type="submit" value="Make a Grid">
+    </form>
+  </div>
 
-  <h2>Pick A Color</h2>
-  <input type="color" id="colorPicker">
+  <div class="color_picker">
+    <h2>Pick A Color</h2>
+    <input type="color" id="colorPicker">
+  </div>
 
-  <h2>Design Canvas</h2>
-  <p>Erase by RMB</p>
-  <table id="pixel_canvas" onmousedown="return false" oncontextmenu="return false"></table>
+  <div class="canvas">
+    <h2>Design Canvas</h2>
+    <table id="pixel_canvas" onmousedown="return false" oncontextmenu="return false"></table>
+  </div>
 
-  <script src="designs.js"></script>
+  <footer>
+    <script src="designs.js"></script>
+  </footer>
 </body>
 
 </html>
