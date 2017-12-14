@@ -6,7 +6,7 @@ const table = $("#pixel_canvas");
 const canvas = document.getElementById("pixel_canvas");
 
 const userLang = navigator.language || navigator.userLanguage;
-// change language 
+// change language
 
 // Function Making grid
 const makeGrid = () => {
