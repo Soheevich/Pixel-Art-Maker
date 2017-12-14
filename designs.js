@@ -52,7 +52,7 @@ table.on("mousedown", "td", event => {
     // Erasing
   } else if (event.which === 3) {
     let erase = true;
-    $(event.target).css("background-color", "white");
+    $(event.target).css("background-color", "");
 
     // Listening for mouseUp and disabling contextmenu
     $(document).on("mouseup", () => erase = false);
@@ -62,7 +62,7 @@ table.on("mousedown", "td", event => {
       if (!erase) {
         return;
       }
-      $(event.target).css("background-color", "white");
+      $(event.target).css("background-color", "");
 
     });
   }
