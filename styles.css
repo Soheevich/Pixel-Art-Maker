@@ -5,6 +5,7 @@ body {
   text-align: center;
   background: #F6F9FC;
   font-family: "Roboto", sans-serif;
+  margin: 0;
 }
 
 .grid {
@@ -12,11 +13,17 @@ body {
   max-width: 900px;
   position: relative;
   margin: auto auto;
-  grid-template: auto auto auto auto 100px / repeat (6, 1fr);
+  grid-template: repeat(4, auto) 100px / repeat(6, 1fr);
 }
 
 header {
   grid-area: 1 / 1 / 1 / 7;
+  background-color: #122A40;
+}
+
+.menu {
+  grid-area: 2 / 1 / 5 / 1;
+  background-color: #ccc;
 }
 
 .pixel_header {
@@ -24,7 +31,6 @@ header {
   font-size: 70px;
   margin: 0.2em;
   color: #F6F9FC;
-  background-color: #122A40;
 }
 
 .cristmas {
@@ -36,15 +42,15 @@ header {
 }
 
 .grid_parameters {
-  grid-area: 2 / 1 / 2 / 7;
+  grid-area: 2 / 2 / 2 / 7;
 }
 
 .color_picker {
-  grid-area: 3 / 1 / 3 / 7;
+  grid-area: 3 / 2 / 3 / 7;
 }
 
 .canvas {
-  grid-area: 4 / 1 / 4 / 7;
+  grid-area: 4 / 2 / 4 / 7;
 }
 
 footer {
@@ -60,7 +66,7 @@ h2:first-of-type {
   margin-top: 0.5em;
 }
 
-table, tr, td {
+tr, td {
   border: 1px solid grey;
 }
 
@@ -69,6 +75,7 @@ table {
   margin: 0 auto;
   transition: all 200ms ease-out;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  border: 2px solid #122A40;
 }
 
 tr {
