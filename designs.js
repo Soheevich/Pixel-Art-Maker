@@ -7,6 +7,7 @@ const canvas = document.getElementById("pixel_canvas");
 const preview_table = $("#preview_canvas");
 const preview_canvas = document.getElementById("preview_canvas");
 
+const borders_button = $(".borders");
 const userLang = navigator.language || navigator.userLanguage;
 // change language
 
@@ -37,6 +38,10 @@ sizePicker.on("submit", event => {
   event.preventDefault();
   makeGrid();
 });
+
+borders_button.click(() => $("td").toggleClass("active"));
+
+
 
 
 // Drawing and Erasing
