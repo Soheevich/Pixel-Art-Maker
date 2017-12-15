@@ -13,13 +13,14 @@ const userLang = navigator.language || navigator.userLanguage;
 // Function Making grid
 const makeGrid = () => {
   // Retrive the values of the input elements.
+  const tbody = $("tbody");
   let height = inputHeight.val();
   let width = inputWidth.val();
 
   // Rest of the function.
-  table.slideUp();
-  table.children().remove();
-  preview_table.children().remove();
+  tbody.children().remove();
+
+  //JavaScript
   for (let i = 0; i < height; i++) {
     let row = canvas.insertRow(i);
     let preview_row = preview_canvas.insertRow(i);
@@ -30,12 +31,10 @@ const makeGrid = () => {
       preview_cell.id = `${i}-${j}`;
     }
   }
-  // table.fadeIn(700);
 }
 
-
-sizePicker.on("submit", e => {
-  e.preventDefault();
+sizePicker.on("submit", event => {
+  event.preventDefault();
   makeGrid();
 });
 
