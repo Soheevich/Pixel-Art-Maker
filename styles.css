@@ -42,16 +42,21 @@ header {
 }
 
 .grid_parameters {
-  grid-area: 2 / 2 / 2 / 7;
+  grid-area: 2 / 2 / 2 / 6;
 }
 
 .color_picker {
-  grid-area: 3 / 2 / 3 / 7;
+  grid-area: 3 / 2 / 3 / 6;
 }
 
 .canvas {
-  grid-area: 4 / 2 / 4 / 7;
+  grid-area: 4 / 2 / 4 / 6;
   min-height: 420px;
+}
+
+.preview {
+  grid-area: 2 / 6 / 5 / 7;
+  background-color: #ccc;
 }
 
 footer {
@@ -81,7 +86,7 @@ table {
 }
 
 .button {
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.16), 0 1px 3px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   height: 30px;
   border: none;
   white-space: nowrap;
@@ -91,7 +96,6 @@ table {
   font-size: 15px;
   font-weight: 600;
   text-transform: uppercase;
-  /* letter-spacing: 0.025em; */
   color: #fff;
   background-color: #6772e5;
   text-decoration: none;
@@ -99,13 +103,19 @@ table {
 }
 
 .button:hover {
-  color: #7795f8;
+  color: #90aaf8;
   transform: translateY(-1px);
+  box-shadow: 0 4px 4px rgba(50, 50, 93, 0.30), 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .button:active {
-  color: #7795f8;
+  color: #90aaf8;
   transform: translateY(+1px);
+}
+
+.maximum {
+  margin-bottom: 15px;
+  margin-top: 0;
 }
 
 tr {
@@ -118,7 +128,7 @@ td {
 
 input[type=number] {
   width: 4em;
-  margin: 10px;
+  margin-right: 15px;
   /* border-color: #122A40; */
 }
 

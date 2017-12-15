@@ -21,7 +21,7 @@
 
     <div class="grid_parameters">
       <h2>Choose Grid Size</h2>
-      <p>(60x60 maximum)</p>
+      <p class="maximum">(60x60 maximum)</p>
       <form id="sizePicker">
         Grid Height:
         <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required> Grid Width:
@@ -37,9 +37,11 @@
 
     <div class="canvas">
       <h2>Design Canvas</h2>
-      <canvas id="canvas_image">
-        <table id="pixel_canvas" onmousedown="return false" oncontextmenu="return false"></table>
-      </canvas>
+      <table id="pixel_canvas" onmousedown="return false" oncontextmenu="return false"></table>
+    </div>
+
+    <div class="preview">
+
     </div>
 
     <footer>
