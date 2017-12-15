@@ -4,6 +4,8 @@ const inputWidth = $("#input_width");
 const sizePicker = $("#sizePicker");
 const table = $("#pixel_canvas");
 const canvas = document.getElementById("pixel_canvas");
+const preview_table = $("#preview_canvas");
+const preview_canvas = document.getElementById("preview_canvas");
 
 const userLang = navigator.language || navigator.userLanguage;
 // change language
@@ -16,10 +18,15 @@ const makeGrid = () => {
 
   // Rest of the function.
   table.children().remove();
+  preview_table.children().remove();
   for (let i = 0; i < height; i++) {
     let row = canvas.insertRow(i);
+    let preview_row = preview_canvas.insertRow(i);
     for (let j = 0; j < width; j++) {
       let cell = row.insertCell(j);
+      cell.id = `${i}-${j}`;
+      let preview_cell = preview_row.insertCell(j);
+      preview_cell.id = `${i}-${j}`;
     }
   }
 }
@@ -37,7 +44,9 @@ table.on("mousedown", "td", event => {
   //Drawing
   if (event.which === 1) {
     let draw = true;
+    let cellId = $(event.target).attr("id");
     $(event.target).css("background-color", colorPicker.val());
+    $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
     // Listening for mouseUp
     $(document).on("mouseup", () => draw = false);
@@ -47,14 +56,18 @@ table.on("mousedown", "td", event => {
       if (!draw) {
         return;
       }
+      let cellId = $(event.target).attr("id");
       $(event.target).css("background-color", colorPicker.val());
+      $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
     });
 
     // Erasing
   } else if (event.which === 3) {
     let erase = true;
+    let cellId = $(event.target).attr("id");
     $(event.target).css("background-color", "");
+    $(`#preview_canvas #${cellId}`).css("background-color", "");
 
     // Listening for mouseUp and disabling contextmenu
     $(document).on("mouseup", () => erase = false);
@@ -64,9 +77,9 @@ table.on("mousedown", "td", event => {
       if (!erase) {
         return;
       }
+      let cellId = $(event.target).attr("id");
       $(event.target).css("background-color", "");
-
+      $(`#preview_canvas #${cellId}`).css("background-color", "");
     });
   }
-
 });

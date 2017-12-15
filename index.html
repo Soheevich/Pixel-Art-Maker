@@ -21,11 +21,19 @@
 
     <div class="grid_parameters">
       <h2>Choose Grid Size</h2>
-      <p class="maximum">(60x60 maximum)</p>
+      <p class="maximum">(40x40 maximum)</p>
       <form id="sizePicker">
-        Grid Height:
-        <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required> Grid Width:
-        <input type="number" id="input_width" name="width" min="1" value="15" min="1" max="40" required>
+        <!-- Grid Height: -->
+        <div class="group">
+          <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required="required"><span class="highlight"></span><span class="bar"></span>
+          <label>Grid Height</label>
+        </div>
+        <div class="group">
+          <input type="number" id="input_width" name="height" min="1" value="15" min="1" max="40" required="required"><span class="highlight"></span><span class="bar"></span>
+          <label>Grid Width</label>
+        </div>
+        <!-- <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required> Grid Width:
+        <input type="number" id="input_width" name="width" min="1" value="15" min="1" max="40" required> -->
         <input class="button" type="submit" value="Make a Grid">
       </form>
     </div>
@@ -40,8 +48,8 @@
       <table id="pixel_canvas" onmousedown="return false" oncontextmenu="return false"></table>
     </div>
 
-    <div class="preview">
-
+    <div class="preview_canvas">
+      <table id="preview_canvas" onmousedown="return false" oncontextmenu="return false"></table>
     </div>
 
     <footer>
