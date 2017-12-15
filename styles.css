@@ -1,6 +1,15 @@
 @import url("https://fonts.googleapis.com/css?family=Permanent+Marker");
 @import url("https://fonts.googleapis.com/css?family=Alegreya+Sans+SC:900");
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 body {
   text-align: center;
   background: #F6F9FC;
@@ -39,6 +48,7 @@ header {
   color: #F23D6D;
   background-color: #122A40;
   margin: 5px auto;
+  animation: fadein 2s;
 }
 
 .grid_parameters {
@@ -61,7 +71,6 @@ header {
 
 footer {
   grid-area: 5 / 1 / 5 / 7;
-  height: 100px;
   background-color: #122A40;
 }
 
@@ -79,10 +88,13 @@ tr, td {
   width: 20px;
 }
 
+td:hover {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
 #pixel_canvas {
   border-collapse: collapse;
   margin: 30px auto;
-  transition: all 200ms ease-out;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   border: 2px solid #122A40;
 }
@@ -90,7 +102,6 @@ tr, td {
 #preview_canvas {
   border-collapse: collapse;
   margin: 30px auto;
-  transition: all 200ms ease-out;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 6px 6px rgba(0, 0, 0, 0.16);
   border: 1.5px solid #122A40;
   background-color: white;
@@ -103,6 +114,7 @@ tr, td {
 }
 
 .button {
+  margin-top: 15px;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   height: 30px;
   border: none;
@@ -135,19 +147,23 @@ tr, td {
   margin-top: 0;
 }
 
-/* input[type=number] {
-  width: 4em;
-  margin-right: 15px;
-  box-sizing: border-box;
+form {
+  padding: 5px;
+  display: inline-flex;
 }
 
-input[type=submit] {
-}*/
-
-.group {
+.field {
+  display: block;
   position: relative;
-  margin: 45px 0;
-  display: inline;
+  right: 5px;
+}
+
+label {
+  font-size: 12px;
+  color: #2196F3;
+  font-weight: normal;
+  display: block;
+  margin: 7px 10px 3px 3px;
 }
 
 input[type=number] {
@@ -157,17 +173,9 @@ input[type=number] {
   border: none;
   border-radius: 0;
   border-bottom: 1px solid #c6c6c6;
+  display: block;
 }
 
 input:focus {
   outline: none;
-}
-
-label {
-  top: -23px;
-  left: -60px;
-  font-size: 12px;
-  color: #2196F3;
-  font-weight: normal;
-  position: relative;
 }

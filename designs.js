@@ -17,6 +17,7 @@ const makeGrid = () => {
   let width = inputWidth.val();
 
   // Rest of the function.
+  table.slideUp();
   table.children().remove();
   preview_table.children().remove();
   for (let i = 0; i < height; i++) {
@@ -29,6 +30,7 @@ const makeGrid = () => {
       preview_cell.id = `${i}-${j}`;
     }
   }
+  // table.fadeIn(700);
 }
 
 

@@ -23,18 +23,16 @@
       <h2>Choose Grid Size</h2>
       <p class="maximum">(40x40 maximum)</p>
       <form id="sizePicker">
-        <!-- Grid Height: -->
-        <div class="group">
-          <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required="required"><span class="highlight"></span><span class="bar"></span>
-          <label>Grid Height</label>
-        </div>
-        <div class="group">
-          <input type="number" id="input_width" name="height" min="1" value="15" min="1" max="40" required="required"><span class="highlight"></span><span class="bar"></span>
-          <label>Grid Width</label>
-        </div>
-        <!-- <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required> Grid Width:
-        <input type="number" id="input_width" name="width" min="1" value="15" min="1" max="40" required> -->
-        <input class="button" type="submit" value="Make a Grid">
+        <!-- Grid size: -->
+        <label>
+            <span class="field">Grid Height</span>
+          <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="40" required>
+          </label>
+        <label>
+            <span class="field">Grid Width</span>
+          <input type="number" id="input_width" name="width" min="1" value="15" min="1" max="40" required>
+          </label>
+        <input class="button" type="submit" value="Make Grid">
       </form>
     </div>
 
