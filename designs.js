@@ -25,19 +25,27 @@ const saveHistoryStep = () => {
   } else {
     newStepIndex = 0;
   }
+  let nextStepName = `step${newStepIndex}`;
 
+  // Finding colored cells and making an array
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
       temporaryColor = table.find(`#${i}-${j}`).css("background-color");
       if (temporaryColor === "rgba(0, 0, 0, 0)") {
         temporaryColor = "";
       }
+      // if (historyRecords[nextStepName].length !== 0) {
+      //   historyRecords[nextStepName] = [];
+      // }
       temporaryArray.push(`${temporaryColor}`);
     }
-    historyRecords[`step${newStepIndex}`].push(temporaryArray);
+    historyRecords[nextStepName].push(temporaryArray);
+    console.log(temporaryArray);
     temporaryArray = [];
   }
 };
+
+
 
 
 // Function Making grid
@@ -91,8 +99,10 @@ table.on("mousedown", "td", event => {
     $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
     // Listening for mouseUp and saving history step
-    $(document).on("mouseup", () => draw = false);
-    saveHistoryStep();
+    $(document).on("mouseup", () => {
+      draw = false;
+      saveHistoryStep();
+    });
 
     // Continuos drawing
     table.on("mouseenter", "td", (event) => {
@@ -113,7 +123,10 @@ table.on("mousedown", "td", event => {
     $(`#preview_canvas #${cellId}`).css("background-color", "");
 
     // Listening for mouseUp and saving history step
-    $(document).on("mouseup", () => erase = false);
+    $(document).on("mouseup", () => {
+      erase = false;
+      saveHistoryStep();
+    });
     saveHistoryStep();
 
     // Continuos erasing
