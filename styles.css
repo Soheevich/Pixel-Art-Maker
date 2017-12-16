@@ -33,6 +33,7 @@ header {
 .menu {
   grid-area: 2 / 1 / 5 / 1;
   background-color: #ccc;
+  padding: 5px;
 }
 
 .pixel_header {

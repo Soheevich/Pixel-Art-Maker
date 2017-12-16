@@ -7,20 +7,36 @@ const canvas = document.getElementById("pixel_canvas");
 const preview_table = $("#preview_canvas");
 const preview_canvas = document.getElementById("preview_canvas");
 
+let height = inputHeight.val(); // Height value
+let width = inputWidth.val(); // Width value
 const borders_button = $(".borders");
 // change language
 const userLang = navigator.language || navigator.userLanguage;
-const history = {
-  step0: [],
-  step1: [],
-  step2: [],
-  step3: [],
-  step4: [],
-  step5: [],
-  step6: [],
-  step7: [],
-  step8: [],
-  step9: [],
+const historyRecords = {}; // Object for 10 history steps
+
+let newStepIndex = 9; // Index of next step for saving history function
+
+// Saving history steps function
+const saveHistoryStep = () => {
+  let temporaryColor = "";
+  let temporaryArray = [];
+  if (newStepIndex < 9) {
+    newStepIndex += 1;
+  } else {
+    newStepIndex = 0;
+  }
+
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      temporaryColor = table.find(`#${i}-${j}`).css("background-color");
+      if (temporaryColor === "rgba(0, 0, 0, 0)") {
+        temporaryColor = "";
+      }
+      temporaryArray.push(`${temporaryColor}`);
+    }
+    historyRecords[`step${newStepIndex}`].push(temporaryArray);
+    temporaryArray = [];
+  }
 };
 
 
@@ -28,13 +44,18 @@ const history = {
 const makeGrid = () => {
   // Retrive the values of the input elements.
   const tbody = $("tbody");
-  let height = inputHeight.val();
-  let width = inputWidth.val();
+  height = inputHeight.val();
+  width = inputWidth.val();
 
   // Rest of the function.
   tbody.children().remove();
 
-  //JavaScript
+  // Making a new blank history records
+  for (let i = 0; i < 10; i++) {
+    historyRecords[`step${i}`] = [];
+  }
+
+  //JavaScript - making grid
   for (let i = 0; i < height; i++) {
     let row = canvas.insertRow(i);
     let preview_row = preview_canvas.insertRow(i);
@@ -69,8 +90,9 @@ table.on("mousedown", "td", event => {
     $(event.target).css("background-color", colorPicker.val());
     $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
-    // Listening for mouseUp
+    // Listening for mouseUp and saving history step
     $(document).on("mouseup", () => draw = false);
+    saveHistoryStep();
 
     // Continuos drawing
     table.on("mouseenter", "td", (event) => {
@@ -90,8 +112,9 @@ table.on("mousedown", "td", event => {
     $(event.target).css("background-color", "");
     $(`#preview_canvas #${cellId}`).css("background-color", "");
 
-    // Listening for mouseUp and disabling contextmenu
+    // Listening for mouseUp and saving history step
     $(document).on("mouseup", () => erase = false);
+    saveHistoryStep();
 
     // Continuos erasing
     table.on("mouseenter", "td", (event) => {
