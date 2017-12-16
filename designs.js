@@ -27,6 +27,11 @@ const saveHistoryStep = () => {
   }
   let nextStepName = `step${newStepIndex}`;
 
+  // Removing previously saved history in the next step
+  if (historyRecords[nextStepName].length > 0) {
+    historyRecords[nextStepName] = [];
+  }
+
   // Finding colored cells and making an array
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
@@ -34,13 +39,9 @@ const saveHistoryStep = () => {
       if (temporaryColor === "rgba(0, 0, 0, 0)") {
         temporaryColor = "";
       }
-      // if (historyRecords[nextStepName].length !== 0) {
-      //   historyRecords[nextStepName] = [];
-      // }
       temporaryArray.push(`${temporaryColor}`);
     }
     historyRecords[nextStepName].push(temporaryArray);
-    console.log(temporaryArray);
     temporaryArray = [];
   }
 };
@@ -84,7 +85,14 @@ sizePicker.on("submit", event => {
 });
 
 
-// On-off borders
+// Listening for clicking on Erase all button
+$(".erase_all").click(() => {
+  $("td").css("background-color", "");
+  saveHistoryStep();
+});
+
+
+// Listening for clicking on Borders button
 borders_button.click(() => $("td").toggleClass("active"));
 
 
