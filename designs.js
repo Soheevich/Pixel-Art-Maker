@@ -26,6 +26,7 @@ const saveHistoryStep = () => {
     newStepIndex = 0;
   }
   let nextStepName = `step${newStepIndex}`;
+  console.log("saveHistoryStep" + newStepIndex);
 
   // Removing previously saved history in the next step
   if (historyRecords[nextStepName].length > 0) {
@@ -56,7 +57,7 @@ const makeGrid = () => {
   height = inputHeight.val();
   width = inputWidth.val();
 
-  // Rest of the function.
+  // Erasing previous grid
   tbody.children().remove();
 
   // Making a new blank history records
@@ -75,17 +76,23 @@ const makeGrid = () => {
       preview_cell.id = `${i}-${j}`;
     }
   }
-}
+};
 
 
 // Listening for clicking on Make grid button
 sizePicker.on("submit", event => {
   event.preventDefault();
   makeGrid();
+  if ($("tbody").length != 0) {
+    $(".erase_all").prop("disabled", false);
+  }
 });
 
 
 // Listening for clicking on Erase all button
+if ($("tbody").length == 0) {
+  $(".erase_all").prop("disabled", true); //Button disabled but it should be showed in css
+}
 $(".erase_all").click(() => {
   $("td").css("background-color", "");
   saveHistoryStep();
@@ -107,7 +114,7 @@ table.on("mousedown", "td", event => {
     $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
     // Listening for mouseUp and saving history step
-    $(document).on("mouseup", () => {
+    $(document).unbind().on("mouseup", () => {
       draw = false;
       saveHistoryStep();
     });
@@ -131,11 +138,10 @@ table.on("mousedown", "td", event => {
     $(`#preview_canvas #${cellId}`).css("background-color", "");
 
     // Listening for mouseUp and saving history step
-    $(document).on("mouseup", () => {
+    $(document).unbind().on("mouseup", () => {
       erase = false;
       saveHistoryStep();
     });
-    saveHistoryStep();
 
     // Continuos erasing
     table.on("mouseenter", "td", (event) => {
