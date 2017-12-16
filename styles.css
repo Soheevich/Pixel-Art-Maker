@@ -91,7 +91,7 @@ td {
   border-radius: 50%; */
 }
 
-td:hover {
+#pixel_canvas td:hover {
   box-shadow: inset 0 0 5px rgba(125, 125, 125, 0.5);
 }
 
@@ -128,10 +128,8 @@ td:hover {
   white-space: nowrap;
   display: inline-block;
   padding: 0 14px;
-  border-radius: 4px;
   font-size: 15px;
   font-weight: 600;
-  text-transform: uppercase;
   color: #fff;
   background-color: #6772e5;
   text-decoration: none;

@@ -8,8 +8,21 @@ const preview_table = $("#preview_canvas");
 const preview_canvas = document.getElementById("preview_canvas");
 
 const borders_button = $(".borders");
-const userLang = navigator.language || navigator.userLanguage;
 // change language
+const userLang = navigator.language || navigator.userLanguage;
+const history = {
+  step0: [],
+  step1: [],
+  step2: [],
+  step3: [],
+  step4: [],
+  step5: [],
+  step6: [],
+  step7: [],
+  step8: [],
+  step9: [],
+};
+
 
 // Function Making grid
 const makeGrid = () => {
@@ -34,14 +47,16 @@ const makeGrid = () => {
   }
 }
 
+
+// Listening for clicking on Make grid button
 sizePicker.on("submit", event => {
   event.preventDefault();
   makeGrid();
 });
 
+
+// On-off borders
 borders_button.click(() => $("td").toggleClass("active"));
-
-
 
 
 // Drawing and Erasing
