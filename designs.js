@@ -114,7 +114,7 @@ table.on("mousedown", "td", event => {
     $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
     // Listening for mouseUp and saving history step
-    $(document).unbind().on("mouseup", () => {
+    $(document).off().on("mouseup", () => {
       draw = false;
       saveHistoryStep();
     });
@@ -138,7 +138,7 @@ table.on("mousedown", "td", event => {
     $(`#preview_canvas #${cellId}`).css("background-color", "");
 
     // Listening for mouseUp and saving history step
-    $(document).unbind().on("mouseup", () => {
+    $(document).off().on("mouseup", () => {
       erase = false;
       saveHistoryStep();
     });
