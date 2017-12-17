@@ -98,7 +98,73 @@ const undoFunction = () => {
 
 
 // Draw Function
-const drawFunction = () => {};
+const drawFunction = (event) => {
+  let eventTarget = $(event.target);
+  let invalid = false;
+  let draw = true;
+  let cellId = eventTarget.attr("id");
+  eventTarget.css("background-color", colorPicker.val());
+  $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
+
+  // Listening for mouseUp and saving history step
+  $(document).on("mouseup", () => {
+    invalid = true;
+    draw = false;
+    saveHistoryStep();
+    $(document).off("mouseup");
+    return;
+  });
+
+
+  if (invalid) {
+    return;
+  }
+
+  // Continuos drawing
+  table.on("mouseenter", "td", (event) => {
+    if (!draw) {
+      return;
+    }
+    let cellId = $(event.target).attr("id");
+    $(event.target).css("background-color", colorPicker.val());
+    $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
+
+  });
+};
+
+
+// Erase function
+const eraseFunction = (event) => {
+  let eventTarget = $(event.target);
+  let invalid = false;
+  let erase = true;
+  let cellId = eventTarget.attr("id");
+  eventTarget.css("background-color", "");
+  $(`#preview_canvas #${cellId}`).css("background-color", "");
+
+  // Listening for mouseUp and saving history step
+  $(document).on("mouseup", () => {
+    invalid = true;
+    erase = false;
+    saveHistoryStep();
+    $(document).off("mouseup");
+    return;
+  });
+
+  if (invalid) {
+    return;
+  }
+
+  // Continuos erasing
+  table.on("mouseenter", "td", (event) => {
+    if (!erase) {
+      return;
+    }
+    let cellId = $(event.target).attr("id");
+    $(event.target).css("background-color", "");
+    $(`#preview_canvas #${cellId}`).css("background-color", "");
+  });
+}
 
 
 // Function Making grid
@@ -163,52 +229,14 @@ borders_button.off("click").on("click", () => $("td").toggleClass("active"));
 
 // Drawing and Erasing
 table.off("mousedown").on("mousedown", "td", event => {
-  let eventTarget = $(event.target);
   //Drawing
   if (event.which === 1) {
-    let draw = true;
-    let cellId = eventTarget.attr("id");
-    eventTarget.css("background-color", colorPicker.val());
-    $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
-
-    // Listening for mouseUp and saving history step
-    $(document).off("mouseup").on("mouseup", () => {
-      draw = false;
-      saveHistoryStep();
-    });
-
-    // Continuos drawing
-    table.on("mouseenter", "td", (event) => {
-      if (!draw) {
-        return;
-      }
-      let cellId = $(event.target).attr("id");
-      $(event.target).css("background-color", colorPicker.val());
-      $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
-
-    });
+    drawFunction(event);
+    return;
 
     // Erasing
   } else if (event.which === 3) {
-    let erase = true;
-    let cellId = eventTarget.attr("id");
-    eventTarget.css("background-color", "");
-    $(`#preview_canvas #${cellId}`).css("background-color", "");
-
-    // Listening for mouseUp and saving history step
-    $(document).off("mouseup").on("mouseup", () => {
-      erase = false;
-      saveHistoryStep();
-    });
-
-    // Continuos erasing
-    table.on("mouseenter", "td", (event) => {
-      if (!erase) {
-        return;
-      }
-      let cellId = $(event.target).attr("id");
-      $(event.target).css("background-color", "");
-      $(`#preview_canvas #${cellId}`).css("background-color", "");
-    });
+    eraseFunction(event);
+    return;
   }
 });
