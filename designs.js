@@ -9,7 +9,7 @@ const preview_canvas = document.getElementById("preview_canvas");
 
 let height = inputHeight.val(); // Height value
 let width = inputWidth.val(); // Width value
-const borders_button = $(".borders");
+let currentUndoRedoStep;
 // change language
 const userLang = navigator.language || navigator.userLanguage;
 const historyRecords = {}; // Object for 10 history steps
@@ -18,8 +18,7 @@ let stepIndex = 9; // Index of current step for saving history function
 
 // Saving history steps function
 const saveHistoryStep = () => {
-  console.log("-- start of saveHistoryStep - stepIndex is " + stepIndex);
-
+  console.log("save history step");
   let temporaryColor = "";
   let temporaryArray = [];
   if (stepIndex < 9) {
@@ -28,6 +27,13 @@ const saveHistoryStep = () => {
     stepIndex = 0;
   }
   let nextStepName = `step${stepIndex}`;
+
+  if (currentUndoRedoStep < 10) {
+    currentUndoRedoStep++;
+    if (currentUndoRedoStep === 1) {
+      $(".history_undo").prop("disabled", false);
+    }
+  }
 
   // Removing previously saved history in the next step
   if (historyRecords[nextStepName].length > 0) {
@@ -46,18 +52,14 @@ const saveHistoryStep = () => {
     historyRecords[nextStepName].push(temporaryArray);
     temporaryArray = [];
   }
-  console.log("end of of saveHistoryStep - stepIndex is " + stepIndex);
-
 };
 
 
 // Erase all Function
 const eraseAll = () => {
   // Making a new blank history records
-  for (let i = 0; i < 10; i++) {
-    historyRecords[`step${i}`] = [];
-  }
   $("td").css("background-color", "");
+  saveHistoryStep();
 }
 
 
@@ -66,16 +68,19 @@ const undoFunction = () => {
   const tbody = $("tbody");
   let temporaryColor = "";
   let StepName;
-  console.log("-- start of undoFunction - stepIndex is " + stepIndex);
   if (stepIndex === 0) {
     stepIndex = 9;
-    console.log("new stepIndex is " + stepIndex);
   } else {
     stepIndex--;
-    console.log("new stepIndex is " + stepIndex);
   }
-
   StepName = `step${stepIndex}`;
+
+  if (currentUndoRedoStep >= 1) {
+    currentUndoRedoStep--;
+    if (currentUndoRedoStep === 0) {
+      $(".history_undo").prop("disabled", true);
+    }
+  }
 
   for (let i = 0; i < height; i++) {
     let cells = historyRecords[StepName][i];
@@ -89,7 +94,6 @@ const undoFunction = () => {
       j++;
     }
   }
-  console.log("end of undoFunction - stepIndex is " + stepIndex);
 };
 
 
@@ -98,15 +102,12 @@ const redoFunction = () => {
   const tbody = $("tbody");
   let temporaryColor = "";
   let StepName;
-  console.log("-- start of undoFunction - stepIndex is " + stepIndex);
+
   if (stepIndex === 9) {
     stepIndex = 0;
-    console.log("new stepIndex is " + stepIndex);
   } else {
     stepIndex++;
-    console.log("new stepIndex is " + stepIndex);
   }
-
   StepName = `step${stepIndex}`;
 
   for (let i = 0; i < height; i++) {
@@ -121,7 +122,6 @@ const redoFunction = () => {
       j++;
     }
   }
-  console.log("end of undoFunction - stepIndex is " + stepIndex);
 };
 
 
@@ -223,6 +223,9 @@ const makeGrid = () => {
 
 
 
+// Listening for changing history steps and undo/redo steps
+
+
 // Listening for clicking on Make grid button
 sizePicker.off("submit").on("submit", event => {
   const tbody = $("tbody");
@@ -231,6 +234,9 @@ sizePicker.off("submit").on("submit", event => {
   makeGrid();
   saveHistoryStep();
   $(".erase_all").prop("disabled", false);
+  $(".history_undo").prop("disabled", true);
+  $(".history_redo").prop("disabled", true);
+  currentUndoRedoStep = 0;
 });
 
 
@@ -252,7 +258,7 @@ $(".history_redo").off("click").on("click", () => {
 
 
 // Listening for clicking on Borders button
-borders_button.off("click").on("click", () => $("td").toggleClass("active"));
+$(".borders").off("click").on("click", () => $("td").toggleClass("active"));
 
 
 // Drawing and Erasing
