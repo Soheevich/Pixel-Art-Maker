@@ -130,8 +130,8 @@ const redoFunction = () => {
   }
 
   for (let i = 0; i < height; i++) {
-    let cells = historyRecords[StepName][i];
     let j = 0;
+    let cells = historyRecords[StepName][i];
     for (let cell of cells) {
       temporaryColor = cell;
       if (temporaryColor === "rgba(0, 0, 0, 0)") {
@@ -141,6 +141,15 @@ const redoFunction = () => {
       j++;
     }
   }
+
+  // Check if next redo is impossible and if yes - disabling button
+  (function() {
+    let nextStepIndex = stepIndex + 1;
+    let Step = `step${nextStepIndex}`;
+    if (historyRecords[Step].length == 0) {
+      $(".history_redo").prop("disabled", true);
+    }
+  })();
 };
 
 
