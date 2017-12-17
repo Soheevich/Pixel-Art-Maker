@@ -10,6 +10,7 @@ const preview_canvas = document.getElementById("preview_canvas");
 let height = inputHeight.val(); // Height value
 let width = inputWidth.val(); // Width value
 let currentUndoRedoStep;
+let stopRedoStep;
 // change language
 const userLang = navigator.language || navigator.userLanguage;
 const historyRecords = {}; // Object for 10 history steps
@@ -18,7 +19,6 @@ let stepIndex = 9; // Index of current step for saving history function
 
 // Saving history steps function
 const saveHistoryStep = () => {
-  console.log("save history step");
   let temporaryColor = "";
   let temporaryArray = [];
   if (stepIndex < 9) {
@@ -28,12 +28,13 @@ const saveHistoryStep = () => {
   }
   let nextStepName = `step${stepIndex}`;
 
-  if (currentUndoRedoStep < 10) {
+  if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
     if (currentUndoRedoStep === 1) {
       $(".history_undo").prop("disabled", false);
     }
   }
+  stopRedoStep = currentUndoRedoStep;
 
   if (!($(".history_undo").prop("disabled"))) {
     $(".history_redo").prop("disabled", true);
@@ -56,6 +57,7 @@ const saveHistoryStep = () => {
     historyRecords[nextStepName].push(temporaryArray);
     temporaryArray = [];
   }
+  console.log("currentUndoRedoStep is " + currentUndoRedoStep);
 };
 
 
@@ -102,6 +104,7 @@ const undoFunction = () => {
       j++;
     }
   }
+  console.log("currentUndoRedoStep is " + currentUndoRedoStep);
 };
 
 
@@ -121,6 +124,9 @@ const redoFunction = () => {
   if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
     if (currentUndoRedoStep === 9) {
+      $(".history_redo").prop("disabled", true);
+    }
+    if (currentUndoRedoStep == stopRedoStep) {
       $(".history_redo").prop("disabled", true);
     }
   }
@@ -269,6 +275,7 @@ sizePicker.off("submit").on("submit", event => {
   $(".erase_all").prop("disabled", false);
   $(".history_undo").prop("disabled", true);
   currentUndoRedoStep = 0;
+  console.log("currentUndoRedoStep is " + currentUndoRedoStep);
 });
 
 
