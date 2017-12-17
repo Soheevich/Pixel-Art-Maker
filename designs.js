@@ -14,19 +14,20 @@ const borders_button = $(".borders");
 const userLang = navigator.language || navigator.userLanguage;
 const historyRecords = {}; // Object for 10 history steps
 
-let newStepIndex = 9; // Index of next step for saving history function
+let stepIndex = 9; // Index of current step for saving history function
 
 // Saving history steps function
 const saveHistoryStep = () => {
+  console.log("-- start of saveHistoryStep - stepIndex is " + stepIndex);
+
   let temporaryColor = "";
   let temporaryArray = [];
-  if (newStepIndex < 9) {
-    newStepIndex += 1;
+  if (stepIndex < 9) {
+    stepIndex++;
   } else {
-    newStepIndex = 0;
+    stepIndex = 0;
   }
-  let nextStepName = `step${newStepIndex}`;
-  console.log("saveHistoryStep" + newStepIndex);
+  let nextStepName = `step${stepIndex}`;
 
   // Removing previously saved history in the next step
   if (historyRecords[nextStepName].length > 0) {
@@ -45,14 +46,63 @@ const saveHistoryStep = () => {
     historyRecords[nextStepName].push(temporaryArray);
     temporaryArray = [];
   }
+  console.log("end of of saveHistoryStep - stepIndex is " + stepIndex);
+
 };
 
 
+// Erase all Function
+const eraseAll = () => {
+  // Making a new blank history records
+  for (let i = 0; i < 10; i++) {
+    historyRecords[`step${i}`] = [];
+  }
+  $("td").css("background-color", "");
+}
+
+
+// Undo Function
+const undoFunction = () => {
+  const tbody = $("tbody");
+  let temporaryColor = "";
+  console.log("-- start of undoFunction - stepIndex is " + stepIndex);
+  if (stepIndex === 0) {
+    stepIndex = 9;
+    console.log("new stepIndex is " + stepIndex);
+  } else {
+    stepIndex--;
+    console.log("new stepIndex is " + stepIndex);
+  }
+
+  let previousStepName = `step${stepIndex}`;
+
+  for (let i = 0; i < height; i++) {
+    let cells = historyRecords[previousStepName][i];
+    let j = 0;
+    for (let cell of cells) {
+      temporaryColor = cell;
+      if (temporaryColor === "rgba(0, 0, 0, 0)") {
+        temporaryColor = "";
+      }
+      tbody.find(`#${i}-${j}`).css("background-color", `${temporaryColor}`);
+      j++;
+    }
+  }
+  console.log("end of undoFunction - stepIndex is " + stepIndex);
+
+};
+
+
+// Redo Function
+///
+
+
+// Draw Function
+const drawFunction = () => {};
 
 
 // Function Making grid
 const makeGrid = () => {
-  // Retrive the values of the input elements.
   const tbody = $("tbody");
   height = inputHeight.val();
   width = inputWidth.val();
@@ -79,42 +129,50 @@ const makeGrid = () => {
 };
 
 
+
 // Listening for clicking on Make grid button
-sizePicker.on("submit", event => {
+sizePicker.off("submit").on("submit", event => {
+  const tbody = $("tbody");
+
   event.preventDefault();
   makeGrid();
-  if ($("tbody").length != 0) {
-    $(".erase_all").prop("disabled", false);
-  }
+  // $(".erase_all").prop("disabled", false);
 });
 
 
 // Listening for clicking on Erase all button
-if ($("tbody").length == 0) {
-  $(".erase_all").prop("disabled", true); //Button disabled but it should be showed in css
-}
-$(".erase_all").click(() => {
-  $("td").css("background-color", "");
-  saveHistoryStep();
+// $(".erase_all").prop("disabled", true); //Button disabled but it should be showed in css
+$(".erase_all").off("click").on("click", () => eraseAll());
+
+
+// Listening for clicking on Undo Button
+$(".history_undo").off("click").on("click", () => {
+  undoFunction();
+});
+
+
+// Listening for clicking on Redo Button
+$(".history_redo").off("click").on("click", () => {
+  redo();
 });
 
 
 // Listening for clicking on Borders button
-borders_button.click(() => $("td").toggleClass("active"));
+borders_button.off("click").on("click", () => $("td").toggleClass("active"));
 
 
 // Drawing and Erasing
-table.on("mousedown", "td", event => {
-
+table.off("mousedown").on("mousedown", "td", event => {
+  let eventTarget = $(event.target);
   //Drawing
   if (event.which === 1) {
     let draw = true;
-    let cellId = $(event.target).attr("id");
-    $(event.target).css("background-color", colorPicker.val());
+    let cellId = eventTarget.attr("id");
+    eventTarget.css("background-color", colorPicker.val());
     $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
     // Listening for mouseUp and saving history step
-    $(document).off().on("mouseup", () => {
+    $(document).off("mouseup").on("mouseup", () => {
       draw = false;
       saveHistoryStep();
     });
@@ -133,12 +191,12 @@ table.on("mousedown", "td", event => {
     // Erasing
   } else if (event.which === 3) {
     let erase = true;
-    let cellId = $(event.target).attr("id");
-    $(event.target).css("background-color", "");
+    let cellId = eventTarget.attr("id");
+    eventTarget.css("background-color", "");
     $(`#preview_canvas #${cellId}`).css("background-color", "");
 
     // Listening for mouseUp and saving history step
-    $(document).off().on("mouseup", () => {
+    $(document).off("mouseup").on("mouseup", () => {
       erase = false;
       saveHistoryStep();
     });
