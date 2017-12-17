@@ -35,6 +35,10 @@ const saveHistoryStep = () => {
     }
   }
 
+  if (!($(".history_undo").prop("disabled"))) {
+    $(".history_redo").prop("disabled", true);
+  }
+
   // Removing previously saved history in the next step
   if (historyRecords[nextStepName].length > 0) {
     historyRecords[nextStepName] = [];
@@ -75,11 +79,15 @@ const undoFunction = () => {
   }
   StepName = `step${stepIndex}`;
 
-  if (currentUndoRedoStep >= 1) {
+  if (currentUndoRedoStep > 0) {
     currentUndoRedoStep--;
     if (currentUndoRedoStep === 0) {
       $(".history_undo").prop("disabled", true);
     }
+  }
+
+  if ($(".history_redo").prop("disabled")) {
+    $(".history_redo").prop("disabled", false);
   }
 
   for (let i = 0; i < height; i++) {
@@ -110,6 +118,17 @@ const redoFunction = () => {
   }
   StepName = `step${stepIndex}`;
 
+  if (currentUndoRedoStep < 9) {
+    currentUndoRedoStep++;
+    if (currentUndoRedoStep === 9) {
+      $(".history_redo").prop("disabled", true);
+    }
+  }
+
+  if ($(".history_undo").prop("disabled")) {
+    $(".history_undo").prop("disabled", false);
+  }
+
   for (let i = 0; i < height; i++) {
     let cells = historyRecords[StepName][i];
     let j = 0;
@@ -131,6 +150,7 @@ const drawFunction = (event) => {
   let invalid = false;
   let draw = true;
   let cellId = eventTarget.attr("id");
+
   eventTarget.css("background-color", colorPicker.val());
   $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
 
@@ -223,7 +243,11 @@ const makeGrid = () => {
 
 
 
-// Listening for changing history steps and undo/redo steps
+// Listening for reload page
+$(window).ready(function() {
+  $(".history_undo").prop("disabled", true);
+  $(".history_redo").prop("disabled", true);
+});
 
 
 // Listening for clicking on Make grid button
@@ -235,7 +259,6 @@ sizePicker.off("submit").on("submit", event => {
   saveHistoryStep();
   $(".erase_all").prop("disabled", false);
   $(".history_undo").prop("disabled", true);
-  $(".history_redo").prop("disabled", true);
   currentUndoRedoStep = 0;
 });
 
