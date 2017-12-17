@@ -65,6 +65,7 @@ const eraseAll = () => {
 const undoFunction = () => {
   const tbody = $("tbody");
   let temporaryColor = "";
+  let StepName;
   console.log("-- start of undoFunction - stepIndex is " + stepIndex);
   if (stepIndex === 0) {
     stepIndex = 9;
@@ -74,10 +75,10 @@ const undoFunction = () => {
     console.log("new stepIndex is " + stepIndex);
   }
 
-  let previousStepName = `step${stepIndex}`;
+  StepName = `step${stepIndex}`;
 
   for (let i = 0; i < height; i++) {
-    let cells = historyRecords[previousStepName][i];
+    let cells = historyRecords[StepName][i];
     let j = 0;
     for (let cell of cells) {
       temporaryColor = cell;
@@ -89,12 +90,39 @@ const undoFunction = () => {
     }
   }
   console.log("end of undoFunction - stepIndex is " + stepIndex);
-
 };
 
 
 // Redo Function
-///
+const redoFunction = () => {
+  const tbody = $("tbody");
+  let temporaryColor = "";
+  let StepName;
+  console.log("-- start of undoFunction - stepIndex is " + stepIndex);
+  if (stepIndex === 9) {
+    stepIndex = 0;
+    console.log("new stepIndex is " + stepIndex);
+  } else {
+    stepIndex++;
+    console.log("new stepIndex is " + stepIndex);
+  }
+
+  StepName = `step${stepIndex}`;
+
+  for (let i = 0; i < height; i++) {
+    let cells = historyRecords[StepName][i];
+    let j = 0;
+    for (let cell of cells) {
+      temporaryColor = cell;
+      if (temporaryColor === "rgba(0, 0, 0, 0)") {
+        temporaryColor = "";
+      }
+      tbody.find(`#${i}-${j}`).css("background-color", `${temporaryColor}`);
+      j++;
+    }
+  }
+  console.log("end of undoFunction - stepIndex is " + stepIndex);
+};
 
 
 // Draw Function
@@ -114,7 +142,6 @@ const drawFunction = (event) => {
     $(document).off("mouseup");
     return;
   });
-
 
   if (invalid) {
     return;
@@ -202,12 +229,13 @@ sizePicker.off("submit").on("submit", event => {
 
   event.preventDefault();
   makeGrid();
-  // $(".erase_all").prop("disabled", false);
+  saveHistoryStep();
+  $(".erase_all").prop("disabled", false);
 });
 
 
 // Listening for clicking on Erase all button
-// $(".erase_all").prop("disabled", true); //Button disabled but it should be showed in css
+$(".erase_all").prop("disabled", true); //Button disabled but it should be showed in css
 $(".erase_all").off("click").on("click", () => eraseAll());
 
 
@@ -219,7 +247,7 @@ $(".history_undo").off("click").on("click", () => {
 
 // Listening for clicking on Redo Button
 $(".history_redo").off("click").on("click", () => {
-  redo();
+  redoFunction();
 });
 
 
