@@ -6,6 +6,9 @@ const table = $("#pixel_canvas");
 const canvas = document.getElementById("pixel_canvas");
 const preview_table = $("#preview_canvas");
 const preview_canvas = document.getElementById("preview_canvas");
+const undoButton = $(".history_undo");
+const redoButton = $(".history_redo");
+const eraseAllButton = $(".erase_all");
 
 let height = inputHeight.val(); // Height value
 let width = inputWidth.val(); // Width value
@@ -21,23 +24,19 @@ let stepIndex = 9; // Index of current step for saving history function
 const saveHistoryStep = () => {
   let temporaryColor = "";
   let temporaryArray = [];
-  if (stepIndex < 9) {
-    stepIndex++;
-  } else {
-    stepIndex = 0;
-  }
+  (stepIndex < 9) ? stepIndex++ : stepIndex = 0;
   let nextStepName = `step${stepIndex}`;
 
   if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
     if (currentUndoRedoStep === 1) {
-      $(".history_undo").prop("disabled", false);
+      undoButtonDisabled(false);
     }
   }
   stopRedoStep = currentUndoRedoStep;
 
-  if (!($(".history_undo").prop("disabled"))) {
-    $(".history_redo").prop("disabled", true);
+  if (!(undoButton.prop("disabled"))) {
+    redoButtonDisabled(true);
   }
 
   // Removing previously saved history in the next step
@@ -69,27 +68,29 @@ const eraseAll = () => {
 }
 
 
+// Erase All button Function
+const eraseButtonDisabled = (condition) => {
+  eraseAllButton.prop("disabled", condition);
+};
+
+
 // Undo Function
 const undoFunction = () => {
   const tbody = $("tbody");
   let temporaryColor = "";
   let StepName;
-  if (stepIndex === 0) {
-    stepIndex = 9;
-  } else {
-    stepIndex--;
-  }
+  (stepIndex === 0) ? stepIndex = 9: stepIndex--;
   StepName = `step${stepIndex}`;
 
   if (currentUndoRedoStep > 0) {
     currentUndoRedoStep--;
     if (currentUndoRedoStep === 0) {
-      $(".history_undo").prop("disabled", true);
+      undoButtonDisabled(true);
     }
   }
 
-  if ($(".history_redo").prop("disabled")) {
-    $(".history_redo").prop("disabled", false);
+  if (redoButton.prop("disabled")) {
+    redoButtonDisabled(false);
   }
 
   for (let i = 0; i < height; i++) {
@@ -108,31 +109,33 @@ const undoFunction = () => {
 };
 
 
+// Undo button Function
+const undoButtonDisabled = (condition) => {
+  undoButton.prop("disabled", condition);
+};
+
+
 // Redo Function
 const redoFunction = () => {
   const tbody = $("tbody");
   let temporaryColor = "";
   let StepName;
 
-  if (stepIndex === 9) {
-    stepIndex = 0;
-  } else {
-    stepIndex++;
-  }
+  (stepIndex === 9) ? stepIndex = 0: stepIndex++;
   StepName = `step${stepIndex}`;
 
   if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
     if (currentUndoRedoStep === 9) {
-      $(".history_redo").prop("disabled", true);
+      redoButtonDisabled(true);
     }
-    if (currentUndoRedoStep == stopRedoStep) {
-      $(".history_redo").prop("disabled", true);
+    if (currentUndoRedoStep === stopRedoStep) {
+      redoButtonDisabled(true);
     }
   }
 
-  if ($(".history_undo").prop("disabled")) {
-    $(".history_undo").prop("disabled", false);
+  if (undoButton.prop("disabled")) {
+    undoButtonDisabled(false);
   }
 
   for (let i = 0; i < height; i++) {
@@ -153,9 +156,15 @@ const redoFunction = () => {
     let nextStepIndex = stepIndex + 1;
     let Step = `step${nextStepIndex}`;
     if (historyRecords[Step].length == 0) {
-      $(".history_redo").prop("disabled", true);
+      redoButtonDisabled(true);
     }
   })();
+};
+
+
+// Redo button Function
+const redoButtonDisabled = (condition) => {
+  redoButton.prop("disabled", condition);
 };
 
 
@@ -260,8 +269,9 @@ const makeGrid = () => {
 
 // Listening for reload page
 $(window).ready(function() {
-  $(".history_undo").prop("disabled", true);
-  $(".history_redo").prop("disabled", true);
+  undoButtonDisabled(true);
+  redoButtonDisabled(true);
+  eraseButtonDisabled(true);
 });
 
 
@@ -272,26 +282,25 @@ sizePicker.off("submit").on("submit", event => {
   event.preventDefault();
   makeGrid();
   saveHistoryStep();
-  $(".erase_all").prop("disabled", false);
-  $(".history_undo").prop("disabled", true);
+  eraseButtonDisabled(false);
+  undoButtonDisabled(true);
   currentUndoRedoStep = 0;
   console.log("currentUndoRedoStep is " + currentUndoRedoStep);
 });
 
 
 // Listening for clicking on Erase all button
-$(".erase_all").prop("disabled", true); //Button disabled but it should be showed in css
-$(".erase_all").off("click").on("click", () => eraseAll());
+eraseAllButton.off("click").on("click", () => eraseAll());
 
 
 // Listening for clicking on Undo Button
-$(".history_undo").off("click").on("click", () => {
+undoButton.off("click").on("click", () => {
   undoFunction();
 });
 
 
 // Listening for clicking on Redo Button
-$(".history_redo").off("click").on("click", () => {
+redoButton.off("click").on("click", () => {
   redoFunction();
 });
 
