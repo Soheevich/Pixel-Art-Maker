@@ -104,6 +104,7 @@ const undoRedoChanges = (state) => {
         color = "";
       }
       $(`#${cellId}`).css("background-color", color);
+      $(`#preview_canvas #${cellId}`).css("background-color", color);
     }
   };
 
@@ -211,6 +212,7 @@ const drawEraseFunction = (event, state) => {
   // Continuos drawing
   table.on("mouseenter", "td", (event) => {
     if (!draw) {
+      table.off("mouseenter", "td");
       return;
     }
     eventTarget = $(event.target);
@@ -221,7 +223,7 @@ const drawEraseFunction = (event, state) => {
       temporaryColor = "none";
     }
 
-    if ((stateBeforeDraw.search(`${cellId}`)) === -1) {
+    if ((stateBeforeDraw.indexOf(cellId)) === -1) {
       stateBeforeDraw += `_${cellId}--${temporaryColor}`;
     }
 
@@ -234,7 +236,7 @@ const drawEraseFunction = (event, state) => {
       $(`#preview_canvas #${cellId}`).css("background-color", "");
       temporaryColor = "none";
     }
-    if ((stateAfterDraw.search(`${cellId}`)) === -1) {
+    if ((stateAfterDraw.indexOf(cellId)) === -1) {
       stateAfterDraw += `_${cellId}--${temporaryColor}`;
     }
   });
