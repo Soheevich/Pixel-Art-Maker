@@ -189,7 +189,8 @@ const drawEraseFunction = (event, state) => {
     eventTarget.css("background-color", temporaryColor);
     $(`#preview_canvas #${cellId}`).css("background-color", temporaryColor);
   } else if (state === "erase") {
-    $(`#${cellId}`).css("background-color", "");
+    eventTarget.css("background-color", "");
+    $(`#preview_canvas #${cellId}`).css("background-color", "");
     temporaryColor = "none";
   }
   stateAfterDraw = `${cellId}--${temporaryColor}`;
@@ -219,18 +220,23 @@ const drawEraseFunction = (event, state) => {
     if (temporaryColor === "rgba(0, 0, 0, 0)") {
       temporaryColor = "none";
     }
-    stateBeforeDraw += `_${cellId}--${temporaryColor}`;
+
+    if ((stateBeforeDraw.search(`${cellId}`)) === -1) {
+      stateBeforeDraw += `_${cellId}--${temporaryColor}`;
+    }
 
     if (state === "draw") {
       temporaryColor = hexToRgbA(colorPicker.val());
       eventTarget.css("background-color", temporaryColor);
       $(`#preview_canvas #${cellId}`).css("background-color", temporaryColor);
     } else if (state === "erase") {
-      $(`#${cellId}`).css("background-color", "");
+      eventTarget.css("background-color", "");
+      $(`#preview_canvas #${cellId}`).css("background-color", "");
       temporaryColor = "none";
     }
-
-    stateAfterDraw += `_${cellId}--${temporaryColor}`;
+    if ((stateAfterDraw.search(`${cellId}`)) === -1) {
+      stateAfterDraw += `_${cellId}--${temporaryColor}`;
+    }
   });
 };
 
