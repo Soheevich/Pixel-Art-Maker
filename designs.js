@@ -22,14 +22,18 @@ let stepIndex = 9; // Index of current step for saving history function
 
 
 // Hex to rgb
-const hexToRgb = (hex) => {
-  let bigint = parseInt(hex, 16);
-  let r = (bigint >> 16) & 255;
-  let g = (bigint >> 8) & 255;
-  let b = bigint & 255;
-
-  return `rgb(${r}, ${g}, ${b})`;
-};
+const hexToRgbA = (hex) => {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length == 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',1)';
+  }
+  throw new Error('Bad Hex');
+}
 
 // Saving history steps function
 const saveHistoryStep = (before, now) => {
@@ -181,8 +185,9 @@ const drawEraseFunction = (event, state) => {
 
   // Drawing/Erasing and saving cell color after drawing/erasing
   if (state === "draw") {
-    temporaryColor = hexToRgb(colorPicker.val());
-    $(`#${cellId}`).css("background-color", colorPicker.val());
+    temporaryColor = hexToRgbA(colorPicker.val());
+    eventTarget.css("background-color", temporaryColor);
+    $(`#preview_canvas #${cellId}`).css("background-color", temporaryColor);
   } else if (state === "erase") {
     $(`#${cellId}`).css("background-color", "");
     temporaryColor = "none";
@@ -217,8 +222,9 @@ const drawEraseFunction = (event, state) => {
     stateBeforeDraw += `_${cellId}--${temporaryColor}`;
 
     if (state === "draw") {
-      $(`#${cellId}`).css("background-color", colorPicker.val());
-      temporaryColor = hexToRgb(colorPicker.val());
+      temporaryColor = hexToRgbA(colorPicker.val());
+      eventTarget.css("background-color", temporaryColor);
+      $(`#preview_canvas #${cellId}`).css("background-color", temporaryColor);
     } else if (state === "erase") {
       $(`#${cellId}`).css("background-color", "");
       temporaryColor = "none";
