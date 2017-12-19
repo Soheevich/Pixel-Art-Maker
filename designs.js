@@ -20,6 +20,17 @@ let historyRecords = []; // Object for 10 history steps
 
 let stepIndex = 9; // Index of current step for saving history function
 
+
+// Hex to rgb
+const hexToRgb = (hex) => {
+  let bigint = parseInt(hex, 16);
+  let r = (bigint >> 16) & 255;
+  let g = (bigint >> 8) & 255;
+  let b = bigint & 255;
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 // Saving history steps function
 const saveHistoryStep = (before, now) => {
   stepIndex < 9 ? stepIndex++ : stepIndex = 0;
@@ -52,11 +63,10 @@ const eraseAll = () => {
       if (temporaryColor === "rgba(0, 0, 0, 0)") {
         temporaryColor = "none";
       }
-      stateBeforeEraseAll += (` ${i}-${j}--${temporaryColor}`);
+      stateBeforeEraseAll += (`_${i}-${j}--${temporaryColor}`);
     }
   }
-
-  stateBeforeEraseAll.trim();
+  stateBeforeEraseAll = stateBeforeEraseAll.slice(1);
   $("td").css("background-color", "");
   saveHistoryStep(stateBeforeEraseAll, "blank");
 }
@@ -79,17 +89,16 @@ const undoRedoChanges = (state) => {
     // Looking for EraseAll step
     if (history[i] === "blank") {
       $("td").css("background-color", "");
+      return;
     }
     // Implementing changes
-    changesArray = history[i].split(" ");
+    changesArray = history[i].split("_");
     for (change of changesArray) {
       elementsOfChange = change.split("--");
-      console.log(elementsOfChange);
       let [cellId, color] = elementsOfChange;
-      if (color = "none") {
+      if (color === "none") {
         color = "";
       }
-      if (i === 1) console.log("color is " + color);
       $(`#${cellId}`).css("background-color", color);
     }
   };
@@ -111,7 +120,6 @@ const undoFunction = () => {
   if (redoButton.prop("disabled")) {
     redoButtonDisabled(false);
   }
-
   // Calling Function for making Undo/Redo changes
   undoRedoChanges("undo");
 
@@ -145,14 +153,6 @@ const redoFunction = () => {
 
   // Calling Function for making Undo/Redo changes
   undoRedoChanges("redo");
-
-  // Check if next redo is impossible and if yes - disabling button
-  // (function() {
-  //   let nextStepIndex = stepIndex + 1;
-  //   if (historyRecords[nextStepIndex].length == 0) {
-  //     redoButtonDisabled(true);
-  //   }
-  // })();
 };
 
 
@@ -181,8 +181,8 @@ const drawEraseFunction = (event, state) => {
 
   // Drawing/Erasing and saving cell color after drawing/erasing
   if (state === "draw") {
-    $(`#${cellId}`).each(() => $(this).css("background-color", colorPicker.val()));
-    temporaryColor = colorPicker.val();
+    temporaryColor = hexToRgb(colorPicker.val());
+    $(`#${cellId}`).css("background-color", colorPicker.val());
   } else if (state === "erase") {
     $(`#${cellId}`).css("background-color", "");
     temporaryColor = "none";
@@ -214,17 +214,17 @@ const drawEraseFunction = (event, state) => {
     if (temporaryColor === "rgba(0, 0, 0, 0)") {
       temporaryColor = "none";
     }
-    stateBeforeDraw += ` ${cellId}--${temporaryColor}`;
+    stateBeforeDraw += `_${cellId}--${temporaryColor}`;
 
     if (state === "draw") {
       $(`#${cellId}`).css("background-color", colorPicker.val());
-      temporaryColor = colorPicker.val();
+      temporaryColor = hexToRgb(colorPicker.val());
     } else if (state === "erase") {
       $(`#${cellId}`).css("background-color", "");
       temporaryColor = "none";
     }
 
-    stateAfterDraw += ` ${cellId}--${temporaryColor}`;
+    stateAfterDraw += `_${cellId}--${temporaryColor}`;
   });
 };
 
