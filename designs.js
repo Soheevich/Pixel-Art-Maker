@@ -22,7 +22,7 @@ let stepIndex = 9; // Index of current step for saving history function
 
 // Saving history steps function
 const saveHistoryStep = (before, now) => {
-  (stepIndex < 9) ? stepIndex++ : stepIndex = 0;
+  stepIndex < 9 ? stepIndex++ : stepIndex = 0;
 
   // Counting steps for undo/redo functions and disabling/enabling their buttons
   if (currentUndoRedoStep < 9) {
@@ -84,16 +84,18 @@ const undoRedoChanges = (state) => {
     changesArray = history[i].split(" ");
     for (change of changesArray) {
       elementsOfChange = change.split("--");
+      console.log(elementsOfChange);
       let [cellId, color] = elementsOfChange;
       if (color = "none") {
         color = "";
       }
+      if (i === 1) console.log("color is " + color);
       $(`#${cellId}`).css("background-color", color);
     }
   };
 
   //Checking for Undo or Redo state and starting changes function
-  (state === "undo") ? changes(0): changes(1);
+  state === "undo" ? changes(0) : changes(1);
 };
 
 
@@ -113,7 +115,7 @@ const undoFunction = () => {
   // Calling Function for making Undo/Redo changes
   undoRedoChanges("undo");
 
-  (stepIndex === 0) ? stepIndex = 9: stepIndex--;
+  stepIndex === 0 ? stepIndex = 9 : stepIndex--;
 };
 
 
@@ -125,7 +127,7 @@ const undoButtonDisabled = (state) => {
 
 // Redo Function
 const redoFunction = () => {
-  (stepIndex === 9) ? stepIndex = 0: stepIndex++;
+  stepIndex === 9 ? stepIndex = 0 : stepIndex++;
 
   // Enabling/Disabling Undo/Redo buttons and counting number of clicks on them
   if (currentUndoRedoStep < 9) {
@@ -145,13 +147,12 @@ const redoFunction = () => {
   undoRedoChanges("redo");
 
   // Check if next redo is impossible and if yes - disabling button
-  (function() {
-    let nextStepIndex = stepIndex + 1;
-    let Step = `step${nextStepIndex}`;
-    if (historyRecords[Step].length == 0) {
-      redoButtonDisabled(true);
-    }
-  })();
+  // (function() {
+  //   let nextStepIndex = stepIndex + 1;
+  //   if (historyRecords[nextStepIndex].length == 0) {
+  //     redoButtonDisabled(true);
+  //   }
+  // })();
 };
 
 
@@ -180,7 +181,7 @@ const drawEraseFunction = (event, state) => {
 
   // Drawing/Erasing and saving cell color after drawing/erasing
   if (state === "draw") {
-    $(`#${cellId}`).css("background-color", colorPicker.val());
+    $(`#${cellId}`).each(() => $(this).css("background-color", colorPicker.val()));
     temporaryColor = colorPicker.val();
   } else if (state === "erase") {
     $(`#${cellId}`).css("background-color", "");
