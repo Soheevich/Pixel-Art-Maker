@@ -59,18 +59,17 @@ const saveHistoryStep = (before, now) => {
 
 // Erase all Function
 const eraseAll = () => {
-  let stateBeforeEraseAll = "";
+  let stateBeforeEraseAll = [];
 
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
+  for (let i = height; i--;) {
+    for (let j = width; j--;) {
       temporaryColor = table.find(`#${i}-${j}`).css("background-color");
       if (temporaryColor === "rgba(0, 0, 0, 0)") {
         temporaryColor = "none";
       }
-      stateBeforeEraseAll += (`_${i}-${j}--${temporaryColor}`);
+      stateBeforeEraseAll.push(`${i}-${j}--${temporaryColor}`);
     }
   }
-  stateBeforeEraseAll = stateBeforeEraseAll.slice(1);
   $("td").css("background-color", "");
   saveHistoryStep(stateBeforeEraseAll, "blank");
 }
@@ -84,19 +83,19 @@ const eraseButtonDisabled = (state) => {
 
 // Function for making Undo/Redo changes
 const undoRedoChanges = (state) => {
-  const history = historyRecords[stepIndex];
+  const historyArray = historyRecords[stepIndex];
   let changesArray;
   let elementsOfChange;
 
   // Function for implementing Undo/Redo changes
   const changes = (i) => {
+    const changesArray = historyArray[i];
     // Looking for EraseAll step
-    if (history[i] === "blank") {
+    if (changesArray === "blank") {
       $("td").css("background-color", "");
       return;
     }
     // Implementing changes
-    changesArray = history[i].split("_");
     for (change of changesArray) {
       elementsOfChange = change.split("--");
       let [cellId, color] = elementsOfChange;
@@ -173,8 +172,8 @@ const drawEraseFunction = (event, state) => {
   let invalid = false;
   let draw = true;
   let cellId = eventTarget.attr("id");
-  let stateBeforeDraw = "";
-  let stateAfterDraw = "";
+  let stateBeforeDraw = [];
+  let stateAfterDraw = [];
   let temporaryColor = "";
 
   // Saving cell color before drawing/erasing
@@ -182,7 +181,7 @@ const drawEraseFunction = (event, state) => {
   if (temporaryColor === "rgba(0, 0, 0, 0)") {
     temporaryColor = "none";
   }
-  stateBeforeDraw = `${cellId}--${temporaryColor}`;
+  stateBeforeDraw.push(`${cellId}--${temporaryColor}`);
 
   // Drawing/Erasing and saving cell color after drawing/erasing
   if (state === "draw") {
@@ -194,7 +193,7 @@ const drawEraseFunction = (event, state) => {
     $(`#preview_canvas #${cellId}`).css("background-color", "");
     temporaryColor = "none";
   }
-  stateAfterDraw = `${cellId}--${temporaryColor}`;
+  stateAfterDraw.push(`${cellId}--${temporaryColor}`);
 
   // Listening for mouseUp and saving history step
   $(document).on("mouseup", () => {
@@ -223,8 +222,9 @@ const drawEraseFunction = (event, state) => {
       temporaryColor = "none";
     }
 
-    if ((stateBeforeDraw.indexOf(cellId)) === -1) {
-      stateBeforeDraw += `_${cellId}--${temporaryColor}`;
+
+    if (stateBeforeDraw.join().indexOf(`${cellId}`) === -1) {
+      stateBeforeDraw.push(`${cellId}--${temporaryColor}`);
     }
 
     if (state === "draw") {
@@ -236,8 +236,8 @@ const drawEraseFunction = (event, state) => {
       $(`#preview_canvas #${cellId}`).css("background-color", "");
       temporaryColor = "none";
     }
-    if ((stateAfterDraw.indexOf(cellId)) === -1) {
-      stateAfterDraw += `_${cellId}--${temporaryColor}`;
+    if (stateAfterDraw.join().indexOf(`${cellId}`) === -1) {
+      stateAfterDraw.push(`${cellId}--${temporaryColor}`);
     }
   });
 };
@@ -254,9 +254,7 @@ const makeGrid = () => {
   tbody.children().remove();
 
   // Making a new blank history records
-  for (let i = 0; i < 10; i++) {
-    historyRecords = [];
-  }
+  historyRecords = [];
 
   //JavaScript - making grid
   for (let i = 0; i < height; i++) {
@@ -287,7 +285,7 @@ sizePicker.off("submit").on("submit", event => {
 
   event.preventDefault();
   makeGrid();
-  saveHistoryStep("", "blank");
+  saveHistoryStep([], "blank");
   eraseButtonDisabled(false);
   undoButtonDisabled(true);
   currentUndoRedoStep = 0;
@@ -316,12 +314,9 @@ $(".borders").off("click").on("click", () => $("td").toggleClass("active"));
 
 // Drawing and Erasing
 table.off("mousedown").on("mousedown", "td", event => {
-  //Drawing
   if (event.which === 1) {
     drawEraseFunction(event, "draw");
     return;
-
-    // Erasing
   } else if (event.which === 3) {
     drawEraseFunction(event, "erase");
     return;
