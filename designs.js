@@ -9,9 +9,8 @@ const preview_canvas = document.getElementById("preview_canvas");
 const undoButton = $(".history_undo");
 const redoButton = $(".history_redo");
 const eraseAllButton = $(".erase_all");
+const eyedropperButton = $(".eyedropper");
 
-let height = inputHeight.val(); // Height value
-let width = inputWidth.val(); // Width value
 let currentUndoRedoStep;
 let stopRedoStep;
 // change language
@@ -19,6 +18,7 @@ const userLang = navigator.language || navigator.userLanguage;
 let historyRecords = []; // Object for 10 history steps
 
 let stepIndex = 9; // Index of current step for saving history function
+// Сделать объект для действий с историей.
 
 
 // Hex to rgb
@@ -60,6 +60,8 @@ const saveHistoryStep = (before, now) => {
 // Erase all Function
 const eraseAll = () => {
   let stateBeforeEraseAll = [];
+  let height = inputHeight.val(); // Height value
+  let width = inputWidth.val(); // Width value
 
   for (let i = height; i--;) {
     for (let j = width; j--;) {
@@ -250,10 +252,7 @@ const makeGrid = () => {
   width = inputWidth.val();
   stepIndex = 9;
 
-  // Erasing previous grid
   tbody.children().remove();
-
-  // Making a new blank history records
   historyRecords = [];
 
   //JavaScript - making grid
@@ -270,7 +269,45 @@ const makeGrid = () => {
 };
 
 
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
 
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+
+
+// Eyedropper function
+eyedropperButton.on("click", () => {
+  // .off("click")
+  let invalid = false;
+  table.css("cursor", "pointer");
+  table.on("click", "td", (event) => {
+    let r, g, b;
+    // invalid = true;
+    let temporaryColor = $(event.target).css("background-color");
+    let rgbString = temporaryColor.slice(4, -1);
+    [r, g, b] = rgbString.split(", ");
+    r = Number(r);
+    g = Number(g);
+    b = Number(b);
+
+    temporaryColor = rgbToHex(r, g, b);
+    console.log(temporaryColor);
+    colorPicker.val(temporaryColor);
+    table.off("click", "td");
+    return;
+  });
+  // if (invalid) {
+  //   return;
+  // }
+});
+
+
+///////////////////////////////////////////////////////
 // Listening for reload page
 $(window).ready(function() {
   undoButtonDisabled(true);
@@ -281,8 +318,6 @@ $(window).ready(function() {
 
 // Listening for clicking on Make grid button
 sizePicker.off("submit").on("submit", event => {
-  const tbody = $("tbody");
-
   event.preventDefault();
   makeGrid();
   saveHistoryStep([], "blank");
@@ -316,9 +351,7 @@ $(".borders").off("click").on("click", () => $("td").toggleClass("active"));
 table.off("mousedown").on("mousedown", "td", event => {
   if (event.which === 1) {
     drawEraseFunction(event, "draw");
-    return;
   } else if (event.which === 3) {
     drawEraseFunction(event, "erase");
-    return;
   }
 });
