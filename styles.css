@@ -51,6 +51,11 @@ header {
   margin: 0.2em;
   color: #FF5349;
   animation: fadein 2s;
+  -webkit-transition: color 1s;
+  -moz-transition:    color 1s;
+  -ms-transition:     color 1s;
+  -o-transition:      color 1s;
+  transition:         color 1s;
 }
 
 .grid_parameters {

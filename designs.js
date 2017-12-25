@@ -252,7 +252,7 @@ const makeGrid = () => {
   width = inputWidth.val();
   stepIndex = 9;
 
-  tbody.children().remove();
+  tbody.empty();
   historyRecords = [];
 
   //JavaScript - making grid
@@ -279,32 +279,26 @@ function rgbToHex(r, g, b) {
 }
 
 
-
 // Eyedropper function
-eyedropperButton.on("click", () => {
-  // .off("click")
-  let invalid = false;
-  table.css("cursor", "pointer");
+const eyeDropper = () => {
+  table.off("mousedown");
   table.on("click", "td", (event) => {
     let r, g, b;
-    // invalid = true;
     let temporaryColor = $(event.target).css("background-color");
     let rgbString = temporaryColor.slice(4, -1);
     [r, g, b] = rgbString.split(", ");
-    r = Number(r);
-    g = Number(g);
-    b = Number(b);
-
-    temporaryColor = rgbToHex(r, g, b);
-    console.log(temporaryColor);
+    temporaryColor = rgbToHex(+r, +g, +b);
     colorPicker.val(temporaryColor);
-    table.off("click", "td");
-    return;
   });
-  // if (invalid) {
-  //   return;
-  // }
-});
+};
+
+
+// Changing color of the title
+const changeColor = () => {
+  let randomColor = () => Math.floor(Math.random() * 255);
+  let color = `rgb(${randomColor()}, ${randomColor()}, ${randomColor()})`;
+  $(".pixel_header").css("color", color);
+};
 
 
 ///////////////////////////////////////////////////////
@@ -323,6 +317,7 @@ sizePicker.off("submit").on("submit", event => {
   saveHistoryStep([], "blank");
   eraseButtonDisabled(false);
   undoButtonDisabled(true);
+  $(".drawing_tool").trigger("click");
   currentUndoRedoStep = 0;
 });
 
@@ -348,10 +343,22 @@ $(".borders").off("click").on("click", () => $("td").toggleClass("active"));
 
 
 // Drawing and Erasing
-table.off("mousedown").on("mousedown", "td", event => {
-  if (event.which === 1) {
-    drawEraseFunction(event, "draw");
-  } else if (event.which === 3) {
-    drawEraseFunction(event, "erase");
-  }
+$(".drawing_tool").click(() => {
+  table.off("click");
+  table.on("mousedown", "td", event => {
+    if (event.which === 1) {
+      drawEraseFunction(event, "draw");
+    } else if (event.which === 3) {
+      drawEraseFunction(event, "erase");
+    }
+  });
+});
+
+eyedropperButton.off("click").on("click", () => {
+  eyeDropper();
+});
+
+// Changing color of header on mouse over
+$(".pixel_header").mouseover(() => {
+  changeColor();
 });
