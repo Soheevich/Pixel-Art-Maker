@@ -132,6 +132,7 @@ td {
   margin: 17px 20px 0 0;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
   height: 30px;
+  /* width: 43px; */
   border: none;
   white-space: nowrap;
   display: inline-block;
@@ -149,14 +150,18 @@ td {
 }
 
 .button:hover:enabled {
-  color: #F0F0F1;
+  /* color: #F0F0F1; */
   transform: translateY(-1px);
   box-shadow: 0 4px 4px rgba(50, 50, 93, 0.30), 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .button:active:enabled {
-  color: #18CDCA;
+  /* color: #18CDCA; */
   transform: translateY(+1px);
+}
+
+.in_use {
+  color: #18CDCA;
 }
 
 .maximum {
@@ -195,4 +200,41 @@ input[type=number] {
 
 input:focus {
   outline: none;
+}
+
+.red {
+  color: #e6194b;
+}
+.orange {
+  color: #f58231;
+}
+.yellow {
+  color: #ffe119;
+}
+.lime {
+  color: #d2f53c;
+}
+.green {
+  color: #3cb44b;
+}
+.cyan {
+  color: #46f0f0;
+}
+.blue {
+  color: #0082c8;
+}
+.purple {
+  color: #911eb4;
+}
+.magenta {
+  color: #f032e6;
+}
+.grey {
+  color: #808080;
+}
+.white {
+  color: #FFFFFF;
+}
+.black {
+  color: #000000;
 }

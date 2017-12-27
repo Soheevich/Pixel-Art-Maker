@@ -10,6 +10,7 @@ const undoButton = $(".history_undo");
 const redoButton = $(".history_redo");
 const eraseAllButton = $(".erase_all");
 const eyedropperButton = $(".eyedropper");
+const drawingButton = $(".drawing_tool");
 
 let currentUndoRedoStep;
 let stopRedoStep;
@@ -19,6 +20,18 @@ let historyRecords = []; // Object for 10 history steps
 
 let stepIndex = 9; // Index of current step for saving history function
 // Сделать объект для действий с историей.
+
+
+// const stepIndexFunction = index => {
+//   let i = index;
+//   return direction => {
+//     direction === "plus" ? (
+//       stepIndex === 9 ? stepIndex = 0 : stepIndex++;
+//     ) : (
+//       stepIndex === 0 ? stepIndex = 9 : stepIndex--;
+//     );
+//   };
+// };
 
 
 // Hex to rgb
@@ -269,12 +282,11 @@ const makeGrid = () => {
 };
 
 
-function componentToHex(c) {
-  var hex = c.toString(16);
-  return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
+const rgbToHex = (r, g, b) => {
+  const componentToHex = color => {
+    const hex = color.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  }
   return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
@@ -283,13 +295,22 @@ function rgbToHex(r, g, b) {
 const eyeDropper = () => {
   table.off("mousedown");
   table.on("click", "td", (event) => {
-    let r, g, b;
     let temporaryColor = $(event.target).css("background-color");
     let rgbString = temporaryColor.slice(4, -1);
-    [r, g, b] = rgbString.split(", ");
+    let [r, g, b] = rgbString.split(", ");
     temporaryColor = rgbToHex(+r, +g, +b);
     colorPicker.val(temporaryColor);
   });
+};
+
+
+// Changing color of the palette
+const colorChange = color => {
+  let temporaryColor = color;
+  let rgbString = temporaryColor.slice(4, -1);
+  let [r, g, b] = rgbString.split(", ");
+  temporaryColor = rgbToHex(+r, +g, +b);
+  colorPicker.val(temporaryColor);
 };
 
 
@@ -317,7 +338,7 @@ sizePicker.off("submit").on("submit", event => {
   saveHistoryStep([], "blank");
   eraseButtonDisabled(false);
   undoButtonDisabled(true);
-  $(".drawing_tool").trigger("click");
+  drawingButton.trigger("click");
   currentUndoRedoStep = 0;
 });
 
@@ -338,12 +359,14 @@ redoButton.off("click").on("click", () => {
 });
 
 
-// Listening for clicking on Borders button
-$(".borders").off("click").on("click", () => $("td").toggleClass("active"));
+// Listening for clicking on Grid button
+$(".grid_canvas").off("click").on("click", () => $("td").toggleClass("active"));
 
 
 // Drawing and Erasing
-$(".drawing_tool").click(() => {
+drawingButton.click(() => {
+  drawingButton.addClass("in_use");
+  eyedropperButton.removeClass("in_use");
   table.off("click");
   table.on("mousedown", "td", event => {
     if (event.which === 1) {
@@ -356,9 +379,17 @@ $(".drawing_tool").click(() => {
 
 eyedropperButton.off("click").on("click", () => {
   eyeDropper();
+  drawingButton.removeClass("in_use");
+  eyedropperButton.addClass("in_use");
 });
 
 // Changing color of header on mouse over
 $(".pixel_header").mouseover(() => {
   changeColor();
+});
+
+// Color buttons function
+$(".color").click(event => {
+  let color = $(event.target).css("color");
+  colorChange(color);
 });

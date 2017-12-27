@@ -6,6 +6,7 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
 </head>
 
 <body>
@@ -15,19 +16,66 @@
     </header>
 
     <div class="menu">
-      <input class="button history_undo" type="button" value="UNDO" disabled="">
-      <input class="button history_redo" type="button" value="REDO" disabled="">
-      <input class="button erase_all" type="button" value="ERASE ALL">
-      <input class="button borders" type="button" value="BORDERS">
-      <input class="button drawing_tool" type="button" value="DRAWING">
-      <input class="button eyedropper" type="button" value="EYEDROPPER">
+      <button class="button history_undo" type="reset">
+        <i class="fas fa-undo"></i>
+      </button>
+      <button class="button history_redo" type="reset">
+        <i class="fas fa-redo"></i>
+      </button>
+      <button class="button erase_all" type="reset">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+      <button class="button grid_canvas" type="reset">
+        <i class="fas fa-th"></i>
+      </button>
+      <button class="button drawing_tool" type="reset">
+        <i class="fas fa-pencil-alt"></i>
+      </button>
+      <button class="button eyedropper" type="reset">
+        <i class="fas fa-eye-dropper"></i>
+      </button>
+      <button class="button red color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button orange color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button yellow color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button lime color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button green color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button cyan color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button blue color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button purple color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button magenta color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button grey color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button white color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
+      <button class="button black color" type="reset">
+        <i class="fas fa-square"></i>
+      </button>
     </div>
 
     <div class="grid_parameters">
       <h2>Choose Grid Size</h2>
       <p class="maximum">(30x30 maximum)</p>
       <form id="sizePicker">
-        <!-- Grid size: -->
         <label>
             <span class="field">Grid Height</span>
           <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="30" required>
