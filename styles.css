@@ -11,7 +11,7 @@
 }
 
 body {
-  width: 80%;
+  /* width: 95%; */
   margin: 0 auto;
   text-align: center;
   background: #F0F0F1;
@@ -27,11 +27,10 @@ body {
   max-width: 1200px;
   position: relative;
   margin: auto auto;
-  grid-template: repeat(5, auto) 100px / repeat(6, 1fr);
+  grid-template: repeat(4, auto) 100px / repeat(6, 1fr);
   grid-template-areas:
   "h h h h h h"
   ". p p p p ."
-  ". cp cp cp cp ."
   "m c c c c pc"
   "f f f f f f";
 }
@@ -43,6 +42,7 @@ header {
 .menu {
   grid-area: m;
   padding: 5px;
+  background: grey;
 }
 
 .pixel_header {
@@ -63,7 +63,7 @@ header {
 }
 
 .color_picker {
-  grid-area: cp;
+  /* grid-area: cp; */
 }
 
 .canvas {
@@ -200,6 +200,10 @@ input[type=number] {
 
 input:focus {
   outline: none;
+}
+
+.color {
+  /* font-size: 1.5em; */
 }
 
 .red {

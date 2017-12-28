@@ -51,6 +51,7 @@ const hexToRgbA = (hex) => {
 // Saving history steps function
 const saveHistoryStep = (before, now) => {
   stepIndex < 9 ? stepIndex++ : stepIndex = 0;
+  console.log("saving history step");
 
   // Counting steps for undo/redo functions and disabling/enabling their buttons
   if (currentUndoRedoStep < 9) {
@@ -216,7 +217,7 @@ const drawEraseFunction = (event, state) => {
     draw = false;
     saveHistoryStep(stateBeforeDraw, stateAfterDraw);
     $(document).off("mouseup");
-    return;
+    // table.off("mousedown");
   });
 
   if (invalid) {
@@ -264,7 +265,6 @@ const makeGrid = () => {
   height = inputHeight.val();
   width = inputWidth.val();
   stepIndex = 9;
-
   tbody.empty();
   historyRecords = [];
 
@@ -293,9 +293,11 @@ const rgbToHex = (r, g, b) => {
 
 // Eyedropper function
 const eyeDropper = () => {
-  table.off("mousedown");
   table.on("click", "td", (event) => {
     let temporaryColor = $(event.target).css("background-color");
+    if (temporaryColor === "rgba(0, 0, 0, 0)") {
+      temporaryColor = "rgb(255, 255, 255)"
+    }
     let rgbString = temporaryColor.slice(4, -1);
     let [r, g, b] = rgbString.split(", ");
     temporaryColor = rgbToHex(+r, +g, +b);
@@ -365,6 +367,7 @@ $(".grid_canvas").off("click").on("click", () => $("td").toggleClass("active"));
 
 // Drawing and Erasing
 drawingButton.click(() => {
+  table.off("mousedown");
   drawingButton.addClass("in_use");
   eyedropperButton.removeClass("in_use");
   table.off("click");
@@ -379,6 +382,7 @@ drawingButton.click(() => {
 
 eyedropperButton.off("click").on("click", () => {
   eyeDropper();
+  table.off("mousedown");
   drawingButton.removeClass("in_use");
   eyedropperButton.addClass("in_use");
 });
