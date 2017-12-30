@@ -9,24 +9,51 @@ const preview_canvas = document.getElementById("preview_canvas");
 const undoButton = $(".history_undo");
 const redoButton = $(".history_redo");
 const eraseAllButton = $(".erase_all");
+const eyedropperButton = $(".eyedropper");
+const drawingButton = $(".drawing_tool");
 
-let height = inputHeight.val(); // Height value
-let width = inputWidth.val(); // Width value
 let currentUndoRedoStep;
 let stopRedoStep;
 // change language
 const userLang = navigator.language || navigator.userLanguage;
-const historyRecords = {}; // Object for 10 history steps
+let historyRecords = []; // Object for 10 history steps
 
 let stepIndex = 9; // Index of current step for saving history function
+// Сделать объект для действий с историей.
+
+
+// const stepIndexFunction = index => {
+//   let i = index;
+//   return direction => {
+//     direction === "plus" ? (
+//       stepIndex === 9 ? stepIndex = 0 : stepIndex++;
+//     ) : (
+//       stepIndex === 0 ? stepIndex = 9 : stepIndex--;
+//     );
+//   };
+// };
+
+
+// Hex to rgb
+const hexToRgbA = (hex) => {
+  var c;
+  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+    c = hex.substring(1).split('');
+    if (c.length == 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = '0x' + c.join('');
+    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',1)';
+  }
+  throw new Error('Bad Hex');
+}
 
 // Saving history steps function
-const saveHistoryStep = () => {
-  let temporaryColor = "";
-  let temporaryArray = [];
-  (stepIndex < 9) ? stepIndex++ : stepIndex = 0;
-  let nextStepName = `step${stepIndex}`;
+const saveHistoryStep = (before, now) => {
+  stepIndex < 9 ? stepIndex++ : stepIndex = 0;
+  console.log("saving history step");
 
+  // Counting steps for undo/redo functions and disabling/enabling their buttons
   if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
     if (currentUndoRedoStep === 1) {
@@ -39,91 +66,98 @@ const saveHistoryStep = () => {
     redoButtonDisabled(true);
   }
 
-  // Removing previously saved history in the next step
-  if (historyRecords[nextStepName].length > 0) {
-    historyRecords[nextStepName] = [];
-  }
-
-  // Finding colored cells and making an array
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-      temporaryColor = table.find(`#${i}-${j}`).css("background-color");
-      if (temporaryColor === "rgba(0, 0, 0, 0)") {
-        temporaryColor = "";
-      }
-      temporaryArray.push(`${temporaryColor}`);
-    }
-    historyRecords[nextStepName].push(temporaryArray);
-    temporaryArray = [];
-  }
-  console.log("currentUndoRedoStep is " + currentUndoRedoStep);
+  // Saving changes and history
+  historyRecords[stepIndex] = [before, now];
 };
 
 
 // Erase all Function
 const eraseAll = () => {
-  // Making a new blank history records
+  let stateBeforeEraseAll = [];
+  let height = inputHeight.val(); // Height value
+  let width = inputWidth.val(); // Width value
+
+  for (let i = height; i--;) {
+    for (let j = width; j--;) {
+      temporaryColor = table.find(`#${i}-${j}`).css("background-color");
+      if (temporaryColor === "rgba(0, 0, 0, 0)") {
+        temporaryColor = "none";
+      }
+      stateBeforeEraseAll.push(`${i}-${j}--${temporaryColor}`);
+    }
+  }
   $("td").css("background-color", "");
-  saveHistoryStep();
+  saveHistoryStep(stateBeforeEraseAll, "blank");
 }
 
 
 // Erase All button Function
-const eraseButtonDisabled = (condition) => {
-  eraseAllButton.prop("disabled", condition);
+const eraseButtonDisabled = (state) => {
+  eraseAllButton.prop("disabled", state);
+};
+
+
+// Function for making Undo/Redo changes
+const undoRedoChanges = (state) => {
+  const historyArray = historyRecords[stepIndex];
+  let changesArray;
+  let elementsOfChange;
+
+  // Function for implementing Undo/Redo changes
+  const changes = (i) => {
+    const changesArray = historyArray[i];
+    // Looking for EraseAll step
+    if (changesArray === "blank") {
+      $("td").css("background-color", "");
+      return;
+    }
+    // Implementing changes
+    for (change of changesArray) {
+      elementsOfChange = change.split("--");
+      let [cellId, color] = elementsOfChange;
+      if (color === "none") {
+        color = "";
+      }
+      $(`#${cellId}`).css("background-color", color);
+      $(`#preview_canvas #${cellId}`).css("background-color", color);
+    }
+  };
+
+  //Checking for Undo or Redo state and starting changes function
+  state === "undo" ? changes(0) : changes(1);
 };
 
 
 // Undo Function
 const undoFunction = () => {
-  const tbody = $("tbody");
-  let temporaryColor = "";
-  let StepName;
-  (stepIndex === 0) ? stepIndex = 9: stepIndex--;
-  StepName = `step${stepIndex}`;
-
+  // Enabling/Disabling Undo/Redo buttons and counting number of clicks on them
   if (currentUndoRedoStep > 0) {
     currentUndoRedoStep--;
     if (currentUndoRedoStep === 0) {
       undoButtonDisabled(true);
     }
   }
-
   if (redoButton.prop("disabled")) {
     redoButtonDisabled(false);
   }
+  // Calling Function for making Undo/Redo changes
+  undoRedoChanges("undo");
 
-  for (let i = 0; i < height; i++) {
-    let cells = historyRecords[StepName][i];
-    let j = 0;
-    for (let cell of cells) {
-      temporaryColor = cell;
-      if (temporaryColor === "rgba(0, 0, 0, 0)") {
-        temporaryColor = "";
-      }
-      tbody.find(`#${i}-${j}`).css("background-color", `${temporaryColor}`);
-      j++;
-    }
-  }
-  console.log("currentUndoRedoStep is " + currentUndoRedoStep);
+  stepIndex === 0 ? stepIndex = 9 : stepIndex--;
 };
 
 
-// Undo button Function
-const undoButtonDisabled = (condition) => {
-  undoButton.prop("disabled", condition);
+// Undo button disabled state
+const undoButtonDisabled = (state) => {
+  undoButton.prop("disabled", state);
 };
 
 
 // Redo Function
 const redoFunction = () => {
-  const tbody = $("tbody");
-  let temporaryColor = "";
-  let StepName;
+  stepIndex === 9 ? stepIndex = 0 : stepIndex++;
 
-  (stepIndex === 9) ? stepIndex = 0: stepIndex++;
-  StepName = `step${stepIndex}`;
-
+  // Enabling/Disabling Undo/Redo buttons and counting number of clicks on them
   if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
     if (currentUndoRedoStep === 9) {
@@ -133,58 +167,57 @@ const redoFunction = () => {
       redoButtonDisabled(true);
     }
   }
-
   if (undoButton.prop("disabled")) {
     undoButtonDisabled(false);
   }
 
-  for (let i = 0; i < height; i++) {
-    let j = 0;
-    let cells = historyRecords[StepName][i];
-    for (let cell of cells) {
-      temporaryColor = cell;
-      if (temporaryColor === "rgba(0, 0, 0, 0)") {
-        temporaryColor = "";
-      }
-      tbody.find(`#${i}-${j}`).css("background-color", `${temporaryColor}`);
-      j++;
-    }
-  }
-
-  // Check if next redo is impossible and if yes - disabling button
-  (function() {
-    let nextStepIndex = stepIndex + 1;
-    let Step = `step${nextStepIndex}`;
-    if (historyRecords[Step].length == 0) {
-      redoButtonDisabled(true);
-    }
-  })();
+  // Calling Function for making Undo/Redo changes
+  undoRedoChanges("redo");
 };
 
 
-// Redo button Function
-const redoButtonDisabled = (condition) => {
-  redoButton.prop("disabled", condition);
+// Redo button disabled state
+const redoButtonDisabled = (state) => {
+  redoButton.prop("disabled", state);
 };
 
 
-// Draw Function
-const drawFunction = (event) => {
+// Draw-Erase Function
+const drawEraseFunction = (event, state) => {
   let eventTarget = $(event.target);
   let invalid = false;
   let draw = true;
   let cellId = eventTarget.attr("id");
+  let stateBeforeDraw = [];
+  let stateAfterDraw = [];
+  let temporaryColor = "";
 
-  eventTarget.css("background-color", colorPicker.val());
-  $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
+  // Saving cell color before drawing/erasing
+  temporaryColor = eventTarget.css("background-color");
+  if (temporaryColor === "rgba(0, 0, 0, 0)") {
+    temporaryColor = "none";
+  }
+  stateBeforeDraw.push(`${cellId}--${temporaryColor}`);
+
+  // Drawing/Erasing and saving cell color after drawing/erasing
+  if (state === "draw") {
+    temporaryColor = hexToRgbA(colorPicker.val());
+    eventTarget.css("background-color", temporaryColor);
+    $(`#preview_canvas #${cellId}`).css("background-color", temporaryColor);
+  } else if (state === "erase") {
+    eventTarget.css("background-color", "");
+    $(`#preview_canvas #${cellId}`).css("background-color", "");
+    temporaryColor = "none";
+  }
+  stateAfterDraw.push(`${cellId}--${temporaryColor}`);
 
   // Listening for mouseUp and saving history step
   $(document).on("mouseup", () => {
     invalid = true;
     draw = false;
-    saveHistoryStep();
+    saveHistoryStep(stateBeforeDraw, stateAfterDraw);
     $(document).off("mouseup");
-    return;
+    // table.off("mousedown");
   });
 
   if (invalid) {
@@ -194,48 +227,36 @@ const drawFunction = (event) => {
   // Continuos drawing
   table.on("mouseenter", "td", (event) => {
     if (!draw) {
+      table.off("mouseenter", "td");
       return;
     }
-    let cellId = $(event.target).attr("id");
-    $(event.target).css("background-color", colorPicker.val());
-    $(`#preview_canvas #${cellId}`).css("background-color", colorPicker.val());
+    eventTarget = $(event.target);
+    cellId = eventTarget.attr("id");
 
+    temporaryColor = eventTarget.css("background-color");
+    if (temporaryColor === "rgba(0, 0, 0, 0)") {
+      temporaryColor = "none";
+    }
+
+
+    if (stateBeforeDraw.join().indexOf(`${cellId}`) === -1) {
+      stateBeforeDraw.push(`${cellId}--${temporaryColor}`);
+    }
+
+    if (state === "draw") {
+      temporaryColor = hexToRgbA(colorPicker.val());
+      eventTarget.css("background-color", temporaryColor);
+      $(`#preview_canvas #${cellId}`).css("background-color", temporaryColor);
+    } else if (state === "erase") {
+      eventTarget.css("background-color", "");
+      $(`#preview_canvas #${cellId}`).css("background-color", "");
+      temporaryColor = "none";
+    }
+    if (stateAfterDraw.join().indexOf(`${cellId}`) === -1) {
+      stateAfterDraw.push(`${cellId}--${temporaryColor}`);
+    }
   });
 };
-
-
-// Erase function
-const eraseFunction = (event) => {
-  let eventTarget = $(event.target);
-  let invalid = false;
-  let erase = true;
-  let cellId = eventTarget.attr("id");
-  eventTarget.css("background-color", "");
-  $(`#preview_canvas #${cellId}`).css("background-color", "");
-
-  // Listening for mouseUp and saving history step
-  $(document).on("mouseup", () => {
-    invalid = true;
-    erase = false;
-    saveHistoryStep();
-    $(document).off("mouseup");
-    return;
-  });
-
-  if (invalid) {
-    return;
-  }
-
-  // Continuos erasing
-  table.on("mouseenter", "td", (event) => {
-    if (!erase) {
-      return;
-    }
-    let cellId = $(event.target).attr("id");
-    $(event.target).css("background-color", "");
-    $(`#preview_canvas #${cellId}`).css("background-color", "");
-  });
-}
 
 
 // Function Making grid
@@ -243,14 +264,9 @@ const makeGrid = () => {
   const tbody = $("tbody");
   height = inputHeight.val();
   width = inputWidth.val();
-
-  // Erasing previous grid
-  tbody.children().remove();
-
-  // Making a new blank history records
-  for (let i = 0; i < 10; i++) {
-    historyRecords[`step${i}`] = [];
-  }
+  stepIndex = 9;
+  tbody.empty();
+  historyRecords = [];
 
   //JavaScript - making grid
   for (let i = 0; i < height; i++) {
@@ -266,7 +282,49 @@ const makeGrid = () => {
 };
 
 
+const rgbToHex = (r, g, b) => {
+  const componentToHex = color => {
+    const hex = color.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  }
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
 
+
+// Eyedropper function
+const eyeDropper = () => {
+  table.on("click", "td", (event) => {
+    let temporaryColor = $(event.target).css("background-color");
+    if (temporaryColor === "rgba(0, 0, 0, 0)") {
+      temporaryColor = "rgb(255, 255, 255)"
+    }
+    let rgbString = temporaryColor.slice(4, -1);
+    let [r, g, b] = rgbString.split(", ");
+    temporaryColor = rgbToHex(+r, +g, +b);
+    colorPicker.val(temporaryColor);
+  });
+};
+
+
+// Changing color of the palette
+const colorChange = color => {
+  let temporaryColor = color;
+  let rgbString = temporaryColor.slice(4, -1);
+  let [r, g, b] = rgbString.split(", ");
+  temporaryColor = rgbToHex(+r, +g, +b);
+  colorPicker.val(temporaryColor);
+};
+
+
+// Changing color of the title
+const changeColor = () => {
+  let randomColor = () => Math.floor(Math.random() * 255);
+  let color = `rgb(${randomColor()}, ${randomColor()}, ${randomColor()})`;
+  $(".pixel_header").css("color", color);
+};
+
+
+///////////////////////////////////////////////////////
 // Listening for reload page
 $(window).ready(function() {
   undoButtonDisabled(true);
@@ -277,15 +335,13 @@ $(window).ready(function() {
 
 // Listening for clicking on Make grid button
 sizePicker.off("submit").on("submit", event => {
-  const tbody = $("tbody");
-
   event.preventDefault();
   makeGrid();
-  saveHistoryStep();
+  saveHistoryStep([], "blank");
   eraseButtonDisabled(false);
   undoButtonDisabled(true);
+  drawingButton.trigger("click");
   currentUndoRedoStep = 0;
-  console.log("currentUndoRedoStep is " + currentUndoRedoStep);
 });
 
 
@@ -305,20 +361,39 @@ redoButton.off("click").on("click", () => {
 });
 
 
-// Listening for clicking on Borders button
-$(".borders").off("click").on("click", () => $("td").toggleClass("active"));
+// Listening for clicking on Grid button
+$(".grid_canvas").off("click").on("click", () => $("td").toggleClass("active"));
 
 
 // Drawing and Erasing
-table.off("mousedown").on("mousedown", "td", event => {
-  //Drawing
-  if (event.which === 1) {
-    drawFunction(event);
-    return;
+drawingButton.click(() => {
+  table.off("mousedown");
+  drawingButton.addClass("in_use");
+  eyedropperButton.removeClass("in_use");
+  table.off("click");
+  table.on("mousedown", "td", event => {
+    if (event.which === 1) {
+      drawEraseFunction(event, "draw");
+    } else if (event.which === 3) {
+      drawEraseFunction(event, "erase");
+    }
+  });
+});
 
-    // Erasing
-  } else if (event.which === 3) {
-    eraseFunction(event);
-    return;
-  }
+eyedropperButton.off("click").on("click", () => {
+  eyeDropper();
+  table.off("mousedown");
+  drawingButton.removeClass("in_use");
+  eyedropperButton.addClass("in_use");
+});
+
+// Changing color of header on mouse over
+$(".pixel_header").mouseover(() => {
+  changeColor();
+});
+
+// Color buttons function
+$(".color").click(event => {
+  let color = $(event.target).css("color");
+  colorChange(color);
 });
