@@ -11,7 +11,7 @@
 
 <body>
   <container class="grid">
-    <header>
+    <header class="header">
       <h1 class="pixel_header">Lab: Pixel Art Maker</h1>
     </header>
 
@@ -41,56 +41,44 @@
       </div>
 
       <button class="button red color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button orange color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button yellow color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button lime color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button green color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button cyan color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button blue color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button purple color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button magenta color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button grey color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button white color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
       <button class="button black color" type="reset">
-        <i class="fas fa-square"></i>
       </button>
     </div>
 
     <div class="grid_parameters">
       <h2>Choose Grid Size</h2>
-      <p class="maximum">(30x30 maximum)</p>
+      <p class="maximum">(30x60 maximum)</p>
       <form id="sizePicker">
         <label>
             <span class="field">Grid Height</span>
-          <input type="number" id="input_height" name="height" min="1" value="15" min="1" max="30" required>
+          <input type="number" id="input_height" name="height" min="1" value="20" min="1" max="30" required>
           </label>
         <label>
             <span class="field">Grid Width</span>
-          <input type="number" id="input_width" name="width" min="1" value="15" min="1" max="30" required>
+          <input type="number" id="input_width" name="width" min="1" value="35" min="1" max="60" required>
           </label>
-        <input class="button" type="submit" value="MAKE GRID">
+        <input class="button" id="make_grid" type="submit" value="MAKE GRID">
       </form>
     </div>
 
@@ -102,7 +90,7 @@
       <table id="preview_canvas" onmousedown="return false" oncontextmenu="return false"></table>
     </div>
 
-    <footer>
+    <footer class="footer">
       <script src="designs.js"></script>
     </footer>
   </container>

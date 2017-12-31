@@ -51,7 +51,6 @@ const hexToRgbA = (hex) => {
 // Saving history steps function
 const saveHistoryStep = (before, now) => {
   stepIndex < 9 ? stepIndex++ : stepIndex = 0;
-  console.log("saving history step");
 
   // Counting steps for undo/redo functions and disabling/enabling their buttons
   if (currentUndoRedoStep < 9) {
@@ -330,6 +329,7 @@ $(window).ready(function() {
   undoButtonDisabled(true);
   redoButtonDisabled(true);
   eraseButtonDisabled(true);
+  happyNewYear();
 });
 
 
@@ -341,6 +341,7 @@ sizePicker.off("submit").on("submit", event => {
   eraseButtonDisabled(false);
   undoButtonDisabled(true);
   drawingButton.trigger("click");
+  $(".grid_canvas").addClass("in_use");
   currentUndoRedoStep = 0;
 });
 
@@ -362,7 +363,10 @@ redoButton.off("click").on("click", () => {
 
 
 // Listening for clicking on Grid button
-$(".grid_canvas").off("click").on("click", () => $("td").toggleClass("active"));
+$(".grid_canvas").off("click").on("click", () => {
+  $("td").toggleClass("active");
+  $(".grid_canvas").toggleClass("in_use");
+});
 
 
 // Drawing and Erasing
@@ -394,6 +398,6 @@ $(".pixel_header").mouseover(() => {
 
 // Color buttons function
 $(".color").click(event => {
-  let color = $(event.target).css("color");
+  let color = $(event.target).css("background-color");
   colorChange(color);
 });
