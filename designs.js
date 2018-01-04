@@ -14,24 +14,28 @@ const drawingButton = $(".drawing_tool");
 
 let currentUndoRedoStep;
 let stopRedoStep;
-// change language
-const userLang = navigator.language || navigator.userLanguage;
 let historyRecords = []; // Object for 10 history steps
 
-let stepIndex = 9; // Index of current step for saving history function
-// Сделать объект для действий с историей.
 
-
-// const stepIndexFunction = index => {
-//   let i = index;
-//   return direction => {
-//     direction === "plus" ? (
-//       stepIndex === 9 ? stepIndex = 0 : stepIndex++;
-//     ) : (
-//       stepIndex === 0 ? stepIndex = 9 : stepIndex--;
-//     );
-//   };
-// };
+// Indexing current steps for saving history function
+const stepIndex = {
+  i: 9,
+  get index() {
+    return this.i;
+  },
+  set index(val) {
+    if ((Number.isInteger(val)) && (val > 0)) {
+      this.i = val;
+    }
+  },
+  counting(direction) {
+    if (direction === "increment") {
+      this.i === 9 ? this.i = 0 : this.i += 1;
+    } else if (direction === "decrement") {
+      this.i === 0 ? this.i = 9 : this.i -= 1;
+    }
+  }
+};
 
 
 // Hex to rgb
@@ -50,8 +54,8 @@ const hexToRgbA = (hex) => {
 
 // Saving history steps function
 const saveHistoryStep = (before, now) => {
-  stepIndex < 9 ? stepIndex++ : stepIndex = 0;
-
+  stepIndex.counting("increment");
+  console.log("saving history step");
   // Counting steps for undo/redo functions and disabling/enabling their buttons
   if (currentUndoRedoStep < 9) {
     currentUndoRedoStep++;
@@ -66,7 +70,7 @@ const saveHistoryStep = (before, now) => {
   }
 
   // Saving changes and history
-  historyRecords[stepIndex] = [before, now];
+  historyRecords[stepIndex.index] = [before, now];
 };
 
 
@@ -98,7 +102,7 @@ const eraseButtonDisabled = (state) => {
 
 // Function for making Undo/Redo changes
 const undoRedoChanges = (state) => {
-  const historyArray = historyRecords[stepIndex];
+  const historyArray = historyRecords[stepIndex.index];
   let changesArray;
   let elementsOfChange;
 
@@ -111,8 +115,8 @@ const undoRedoChanges = (state) => {
       return;
     }
     // Implementing changes
-    for (change of changesArray) {
-      elementsOfChange = change.split("--");
+    for (let i = changesArray.length; i--;) {
+      elementsOfChange = changesArray[i].split("--");
       let [cellId, color] = elementsOfChange;
       if (color === "none") {
         color = "";
@@ -142,7 +146,7 @@ const undoFunction = () => {
   // Calling Function for making Undo/Redo changes
   undoRedoChanges("undo");
 
-  stepIndex === 0 ? stepIndex = 9 : stepIndex--;
+  stepIndex.counting("decrement");
 };
 
 
@@ -154,7 +158,7 @@ const undoButtonDisabled = (state) => {
 
 // Redo Function
 const redoFunction = () => {
-  stepIndex === 9 ? stepIndex = 0 : stepIndex++;
+  stepIndex.counting("increment");
 
   // Enabling/Disabling Undo/Redo buttons and counting number of clicks on them
   if (currentUndoRedoStep < 9) {
@@ -237,10 +241,9 @@ const drawEraseFunction = (event, state) => {
       temporaryColor = "none";
     }
 
-
-    if (stateBeforeDraw.join().indexOf(`${cellId}`) === -1) {
-      stateBeforeDraw.push(`${cellId}--${temporaryColor}`);
-    }
+    // if (stateBeforeDraw.join().indexOf(`${cellId}`) === -1) {
+    stateBeforeDraw.push(`${cellId}--${temporaryColor}`);
+    // }
 
     if (state === "draw") {
       temporaryColor = hexToRgbA(colorPicker.val());
@@ -251,9 +254,9 @@ const drawEraseFunction = (event, state) => {
       $(`#preview_canvas #${cellId}`).css("background-color", "");
       temporaryColor = "none";
     }
-    if (stateAfterDraw.join().indexOf(`${cellId}`) === -1) {
-      stateAfterDraw.push(`${cellId}--${temporaryColor}`);
-    }
+    // if (stateAfterDraw.join().indexOf(`${cellId}`) === -1) {
+    stateAfterDraw.push(`${cellId}--${temporaryColor}`);
+    // }
   });
 };
 
@@ -263,7 +266,7 @@ const makeGrid = () => {
   const tbody = $("tbody");
   height = inputHeight.val();
   width = inputWidth.val();
-  stepIndex = 9;
+  stepIndex.index = 9;
   tbody.empty();
   historyRecords = [];
 
@@ -329,12 +332,11 @@ $(window).ready(function() {
   undoButtonDisabled(true);
   redoButtonDisabled(true);
   eraseButtonDisabled(true);
-  happyNewYear();
 });
 
 
 // Listening for clicking on Make grid button
-sizePicker.off("submit").on("submit", event => {
+sizePicker.on("submit", event => {
   event.preventDefault();
   makeGrid();
   saveHistoryStep([], "blank");
@@ -347,23 +349,23 @@ sizePicker.off("submit").on("submit", event => {
 
 
 // Listening for clicking on Erase all button
-eraseAllButton.off("click").on("click", () => eraseAll());
+eraseAllButton.on("click", () => eraseAll());
 
 
 // Listening for clicking on Undo Button
-undoButton.off("click").on("click", () => {
+undoButton.on("click", () => {
   undoFunction();
 });
 
 
 // Listening for clicking on Redo Button
-redoButton.off("click").on("click", () => {
+redoButton.on("click", () => {
   redoFunction();
 });
 
 
 // Listening for clicking on Grid button
-$(".grid_canvas").off("click").on("click", () => {
+$(".grid_canvas").on("click", () => {
   $("td").toggleClass("active");
   $(".grid_canvas").toggleClass("in_use");
 });
@@ -384,7 +386,7 @@ drawingButton.click(() => {
   });
 });
 
-eyedropperButton.off("click").on("click", () => {
+eyedropperButton.on("click", () => {
   eyeDropper();
   table.off("mousedown");
   drawingButton.removeClass("in_use");
