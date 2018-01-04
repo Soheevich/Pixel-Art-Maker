@@ -12,7 +12,6 @@ const eraseAllButton = $(".erase_all");
 const eyedropperButton = $(".eyedropper");
 const drawingButton = $(".drawing_tool");
 
-let currentUndoRedoStep;
 let stopRedoStep;
 let historyRecords = []; // Object for 10 history steps
 
@@ -24,15 +23,50 @@ const stepIndex = {
     return this.i;
   },
   set index(val) {
-    if ((Number.isInteger(val)) && (val > 0)) {
+    if ((Number.isInteger(val)) && (val >= 0)) {
       this.i = val;
     }
   },
   counting(direction) {
     if (direction === "increment") {
-      this.i === 9 ? this.i = 0 : this.i += 1;
+      this.i === 9 ? this.i = 0 : this.i++;
     } else if (direction === "decrement") {
-      this.i === 0 ? this.i = 9 : this.i -= 1;
+      this.i === 0 ? this.i = 9 : this.i--;
+    }
+  }
+};
+
+const currentUndoRedoStep = {
+  step: 0,
+  get currentStep() {
+    return this.step;
+  },
+  set currentStep(val) {
+    if ((Number.isInteger(val)) && val >= 0) {
+      this.step = val;
+    }
+  },
+  counting(direction) {
+    if (direction === "increment") {
+      if (this.step < 9) {
+        this.step++;
+        if (this.currentStep === 1) {
+          undoButtonDisabled(false);
+        }
+        if (this.currentStep === 9) {
+          redoButtonDisabled(true);
+        }
+      }
+    } else if (direction === "decrement") {
+      if (this.step > 0) {
+        this.step--;
+        if (this.step === 0) {
+          undoButtonDisabled(true);
+        }
+        if (redoButton.prop("disabled")) {
+          redoButtonDisabled(false);
+        }
+      }
     }
   }
 };
@@ -57,13 +91,9 @@ const saveHistoryStep = (before, now) => {
   stepIndex.counting("increment");
   console.log("saving history step");
   // Counting steps for undo/redo functions and disabling/enabling their buttons
-  if (currentUndoRedoStep < 9) {
-    currentUndoRedoStep++;
-    if (currentUndoRedoStep === 1) {
-      undoButtonDisabled(false);
-    }
-  }
-  stopRedoStep = currentUndoRedoStep;
+  currentUndoRedoStep.counting("increment");
+
+  stopRedoStep = currentUndoRedoStep.currentStep;
 
   if (!(undoButton.prop("disabled"))) {
     redoButtonDisabled(true);
@@ -134,15 +164,8 @@ const undoRedoChanges = (state) => {
 // Undo Function
 const undoFunction = () => {
   // Enabling/Disabling Undo/Redo buttons and counting number of clicks on them
-  if (currentUndoRedoStep > 0) {
-    currentUndoRedoStep--;
-    if (currentUndoRedoStep === 0) {
-      undoButtonDisabled(true);
-    }
-  }
-  if (redoButton.prop("disabled")) {
-    redoButtonDisabled(false);
-  }
+  currentUndoRedoStep.counting("decrement");
+
   // Calling Function for making Undo/Redo changes
   undoRedoChanges("undo");
 
@@ -161,15 +184,11 @@ const redoFunction = () => {
   stepIndex.counting("increment");
 
   // Enabling/Disabling Undo/Redo buttons and counting number of clicks on them
-  if (currentUndoRedoStep < 9) {
-    currentUndoRedoStep++;
-    if (currentUndoRedoStep === 9) {
-      redoButtonDisabled(true);
-    }
-    if (currentUndoRedoStep === stopRedoStep) {
-      redoButtonDisabled(true);
-    }
+  currentUndoRedoStep.counting("increment");
+  if (currentUndoRedoStep.currentStep === stopRedoStep) {
+    redoButtonDisabled(true);
   }
+
   if (undoButton.prop("disabled")) {
     undoButtonDisabled(false);
   }
@@ -344,7 +363,7 @@ sizePicker.on("submit", event => {
   undoButtonDisabled(true);
   drawingButton.trigger("click");
   $(".grid_canvas").addClass("in_use");
-  currentUndoRedoStep = 0;
+  currentUndoRedoStep.currentStep = 0;
 });
 
 
