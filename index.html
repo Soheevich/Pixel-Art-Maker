@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>Pixel Art Maker!</title>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Pixel Art Maker!</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
 </head>
 
 <body>
-  <container class="grid">
+  <main class="grid">
     <header class="header">
       <h1 class="pixel_header">Lab: Pixel Art Maker</h1>
     </header>
 
-    <div class="menu">
+    <section class="menu">
       <button class="button history_undo" type="reset">
         <i class="fas fa-undo"></i>
         <span>Undo</span>
@@ -70,36 +72,36 @@
       </button>
       <button class="button black color" type="reset">
       </button>
-    </div>
+    </section>
 
-    <div class="grid_parameters">
+    <section class="grid_parameters">
       <h2>Choose Grid Size</h2>
       <p class="maximum">(30x60 maximum)</p>
       <form id="sizePicker">
         <label>
-            <span class="field">Grid Height</span>
-          <input type="number" id="input_height" name="height" min="1" value="20" min="1" max="30" required>
-          </label>
+          <span class="field">Grid Height</span>
+          <input type="number" id="input_height" name="height" value="20" min="1" max="30" required>
+        </label>
         <label>
-            <span class="field">Grid Width</span>
-          <input type="number" id="input_width" name="width" min="1" value="35" min="1" max="60" required>
-          </label>
+          <span class="field">Grid Width</span>
+          <input type="number" id="input_width" name="width" value="35" min="1" max="60" required>
+        </label>
         <input class="button" id="make_grid" type="submit" value="MAKE GRID">
       </form>
-    </div>
+    </section>
 
-    <div class="canvas">
+    <section class="canvas">
       <table id="pixel_canvas" onmousedown="return false" oncontextmenu="return false"></table>
-    </div>
+    </section>
 
-    <div class="preview_canvas">
+    <section class="preview_canvas">
       <table id="preview_canvas" onmousedown="return false" oncontextmenu="return false"></table>
-    </div>
+    </section>
 
     <footer class="footer">
       <script src="designs.js"></script>
     </footer>
-  </container>
+  </main>
 </body>
 
 </html>
